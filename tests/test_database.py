@@ -1,0 +1,150 @@
+"""
+Tests for database operations.
+"""
+import unittest
+import tempfile
+import os
+from datetime import datetime
+
+from hobby_budget_tracker.database import Database
+from hobby_budget_tracker.models import Hobby, Expense, Activity
+
+
+class TestDatabase(unittest.TestCase):
+    """Test database operations."""
+    
+    def setUp(self):
+        """Set up test database."""
+        self.temp_db = tempfile.NamedTemporaryFile(delete=False, suffix='.db')
+        self.temp_db.close()
+        self.db = Database(self.temp_db.name)
+    
+    def tearDown(self):
+        """Clean up test database."""
+        self.db.close()
+        os.unlink(self.temp_db.name)
+    
+    def test_add_and_get_hobby(self):
+        """Test adding and retrieving a hobby."""
+        hobby = Hobby(id=None, name="Photography", description="Taking photos")
+        hobby_id = self.db.add_hobby(hobby)
+        
+        retrieved = self.db.get_hobby(hobby_id)
+        self.assertIsNotNone(retrieved)
+        self.assertEqual(retrieved.name, "Photography")
+        self.assertEqual(retrieved.description, "Taking photos")
+    
+    def test_list_hobbies(self):
+        """Test listing hobbies."""
+        hobby1 = Hobby(id=None, name="Painting")
+        hobby2 = Hobby(id=None, name="Gaming")
+        
+        self.db.add_hobby(hobby1)
+        self.db.add_hobby(hobby2)
+        
+        hobbies = self.db.list_hobbies()
+        self.assertEqual(len(hobbies), 2)
+        names = [h.name for h in hobbies]
+        self.assertIn("Painting", names)
+        self.assertIn("Gaming", names)
+    
+    def test_get_hobby_by_name(self):
+        """Test getting hobby by name."""
+        hobby = Hobby(id=None, name="Cooking")
+        self.db.add_hobby(hobby)
+        
+        retrieved = self.db.get_hobby_by_name("Cooking")
+        self.assertIsNotNone(retrieved)
+        self.assertEqual(retrieved.name, "Cooking")
+    
+    def test_delete_hobby(self):
+        """Test deleting a hobby."""
+        hobby = Hobby(id=None, name="Reading")
+        hobby_id = self.db.add_hobby(hobby)
+        
+        self.db.delete_hobby(hobby_id)
+        
+        retrieved = self.db.get_hobby(hobby_id)
+        self.assertIsNone(retrieved)
+    
+    def test_add_and_list_expenses(self):
+        """Test adding and listing expenses."""
+        hobby = Hobby(id=None, name="Gardening")
+        hobby_id = self.db.add_hobby(hobby)
+        
+        expense1 = Expense(id=None, hobby_id=hobby_id, amount=50.0, description="Seeds")
+        expense2 = Expense(id=None, hobby_id=hobby_id, amount=30.0, description="Tools")
+        
+        self.db.add_expense(expense1)
+        self.db.add_expense(expense2)
+        
+        expenses = self.db.list_expenses(hobby_id)
+        self.assertEqual(len(expenses), 2)
+    
+    def test_get_total_expenses(self):
+        """Test calculating total expenses."""
+        hobby = Hobby(id=None, name="Woodworking")
+        hobby_id = self.db.add_hobby(hobby)
+        
+        self.db.add_expense(Expense(id=None, hobby_id=hobby_id, amount=100.0))
+        self.db.add_expense(Expense(id=None, hobby_id=hobby_id, amount=150.0))
+        
+        total = self.db.get_total_expenses(hobby_id)
+        self.assertEqual(total, 250.0)
+    
+    def test_add_and_list_activities(self):
+        """Test adding and listing activities."""
+        hobby = Hobby(id=None, name="Music")
+        hobby_id = self.db.add_hobby(hobby)
+        
+        activity1 = Activity(id=None, hobby_id=hobby_id, duration_hours=2.5)
+        activity2 = Activity(id=None, hobby_id=hobby_id, duration_hours=1.0)
+        
+        self.db.add_activity(activity1)
+        self.db.add_activity(activity2)
+        
+        activities = self.db.list_activities(hobby_id)
+        self.assertEqual(len(activities), 2)
+    
+    def test_get_total_hours(self):
+        """Test calculating total hours."""
+        hobby = Hobby(id=None, name="Drawing")
+        hobby_id = self.db.add_hobby(hobby)
+        
+        self.db.add_activity(Activity(id=None, hobby_id=hobby_id, duration_hours=3.0))
+        self.db.add_activity(Activity(id=None, hobby_id=hobby_id, duration_hours=2.5))
+        
+        total = self.db.get_total_hours(hobby_id)
+        self.assertEqual(total, 5.5)
+    
+    def test_get_expense_per_hour(self):
+        """Test calculating expense per hour (KPI)."""
+        hobby = Hobby(id=None, name="Cycling")
+        hobby_id = self.db.add_hobby(hobby)
+        
+        # Add expenses
+        self.db.add_expense(Expense(id=None, hobby_id=hobby_id, amount=200.0))
+        self.db.add_expense(Expense(id=None, hobby_id=hobby_id, amount=100.0))
+        
+        # Add activities
+        self.db.add_activity(Activity(id=None, hobby_id=hobby_id, duration_hours=10.0))
+        self.db.add_activity(Activity(id=None, hobby_id=hobby_id, duration_hours=5.0))
+        
+        # Total: 300 / 15 = 20.0
+        expense_per_hour = self.db.get_expense_per_hour(hobby_id)
+        self.assertIsNotNone(expense_per_hour)
+        self.assertEqual(expense_per_hour, 20.0)
+    
+    def test_get_expense_per_hour_no_activities(self):
+        """Test expense per hour returns None when no activities."""
+        hobby = Hobby(id=None, name="Fishing")
+        hobby_id = self.db.add_hobby(hobby)
+        
+        self.db.add_expense(Expense(id=None, hobby_id=hobby_id, amount=100.0))
+        
+        expense_per_hour = self.db.get_expense_per_hour(hobby_id)
+        self.assertIsNone(expense_per_hour)
+
+
+if __name__ == '__main__':
+    unittest.main()
