@@ -6,7 +6,7 @@ import sys
 from datetime import datetime
 from typing import Optional
 
-from .database import Database
+from .database import Database, DuplicateHobbyError
 from .models import Hobby, Expense, Activity
 
 
@@ -101,9 +101,13 @@ class CLI:
         """Handle hobby subcommands."""
         if args.hobby_command == "add":
             hobby = Hobby(id=None, name=args.name, description=args.description)
-            hobby_id = self.db.add_hobby(hobby)
-            print(f"✓ Added hobby '{args.name}' (ID: {hobby_id})")
-            return 0
+            try:
+                hobby_id = self.db.add_hobby(hobby)
+                print(f"✓ Added hobby '{args.name}' (ID: {hobby_id})")
+                return 0
+            except DuplicateHobbyError as e:
+                print(f"Error: {e}", file=sys.stderr)
+                return 1
         
         elif args.hobby_command == "list":
             hobbies = self.db.list_hobbies()

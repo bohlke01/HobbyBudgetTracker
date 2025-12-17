@@ -144,6 +144,17 @@ class TestDatabase(unittest.TestCase):
         
         expense_per_hour = self.db.get_expense_per_hour(hobby_id)
         self.assertIsNone(expense_per_hour)
+    
+    def test_duplicate_hobby_name(self):
+        """Test that adding a hobby with duplicate name raises error."""
+        from hobby_budget_tracker.database import DuplicateHobbyError
+        
+        hobby1 = Hobby(id=None, name="Archery")
+        self.db.add_hobby(hobby1)
+        
+        hobby2 = Hobby(id=None, name="Archery", description="Different description")
+        with self.assertRaises(DuplicateHobbyError):
+            self.db.add_hobby(hobby2)
 
 
 if __name__ == '__main__':

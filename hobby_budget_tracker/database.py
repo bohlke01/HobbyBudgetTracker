@@ -9,6 +9,11 @@ from datetime import datetime
 from .models import Hobby, Expense, Activity
 
 
+class DuplicateHobbyError(Exception):
+    """Raised when attempting to add a hobby with a duplicate name."""
+    pass
+
+
 class Database:
     """Manages SQLite database operations."""
     
@@ -68,12 +73,15 @@ class Database:
     def add_hobby(self, hobby: Hobby) -> int:
         """Add a new hobby to the database."""
         cursor = self.conn.cursor()
-        cursor.execute(
-            "INSERT INTO hobbies (name, description, created_at) VALUES (?, ?, ?)",
-            (hobby.name, hobby.description, hobby.created_at.isoformat())
-        )
-        self.conn.commit()
-        return cursor.lastrowid
+        try:
+            cursor.execute(
+                "INSERT INTO hobbies (name, description, created_at) VALUES (?, ?, ?)",
+                (hobby.name, hobby.description, hobby.created_at.isoformat())
+            )
+            self.conn.commit()
+            return cursor.lastrowid
+        except sqlite3.IntegrityError:
+            raise DuplicateHobbyError(f"A hobby with the name '{hobby.name}' already exists")
     
     def get_hobby(self, hobby_id: int) -> Optional[Hobby]:
         """Get a hobby by ID."""
@@ -121,10 +129,14 @@ class Database:
     def delete_hobby(self, hobby_id: int):
         """Delete a hobby and all related expenses and activities."""
         cursor = self.conn.cursor()
-        cursor.execute("DELETE FROM activities WHERE hobby_id = ?", (hobby_id,))
-        cursor.execute("DELETE FROM expenses WHERE hobby_id = ?", (hobby_id,))
-        cursor.execute("DELETE FROM hobbies WHERE id = ?", (hobby_id,))
-        self.conn.commit()
+        try:
+            cursor.execute("DELETE FROM activities WHERE hobby_id = ?", (hobby_id,))
+            cursor.execute("DELETE FROM expenses WHERE hobby_id = ?", (hobby_id,))
+            cursor.execute("DELETE FROM hobbies WHERE id = ?", (hobby_id,))
+            self.conn.commit()
+        except sqlite3.Error:
+            self.conn.rollback()
+            raise
     
     # Expense operations
     def add_expense(self, expense: Expense) -> int:
