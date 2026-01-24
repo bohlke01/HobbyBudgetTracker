@@ -2,7 +2,7 @@
 Web interface for Hobby Budget Tracker using Flask.
 """
 import os
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory, g
 from pathlib import Path
 from datetime import datetime
 
@@ -20,9 +20,20 @@ def create_app(db_path: str = "hobby_budget.db"):
     
     app.template_folder = str(template_folder)
     app.static_folder = str(static_folder)
+    app.config['DB_PATH'] = db_path
     
-    # Initialize database
-    db = Database(db_path)
+    def get_db():
+        """Get database connection for current request."""
+        if 'db' not in g:
+            g.db = Database(app.config['DB_PATH'])
+        return g.db
+    
+    @app.teardown_appcontext
+    def close_db(error):
+        """Close database connection at end of request."""
+        db = g.pop('db', None)
+        if db is not None:
+            db.close()
     
     @app.route('/')
     def index():
@@ -33,6 +44,7 @@ def create_app(db_path: str = "hobby_budget.db"):
     @app.route('/api/hobbies', methods=['GET'])
     def get_hobbies():
         """Get all hobbies."""
+        db = get_db()
         hobbies = db.list_hobbies()
         return jsonify([{
             'id': h.id,
@@ -44,6 +56,7 @@ def create_app(db_path: str = "hobby_budget.db"):
     @app.route('/api/hobbies', methods=['POST'])
     def add_hobby():
         """Add a new hobby."""
+        db = get_db()
         data = request.get_json()
         try:
             hobby = Hobby(
@@ -61,6 +74,7 @@ def create_app(db_path: str = "hobby_budget.db"):
     @app.route('/api/hobbies/<int:hobby_id>', methods=['DELETE'])
     def delete_hobby(hobby_id):
         """Delete a hobby."""
+        db = get_db()
         hobby = db.get_hobby(hobby_id)
         if not hobby:
             return jsonify({'error': 'Hobby not found'}), 404
@@ -70,6 +84,7 @@ def create_app(db_path: str = "hobby_budget.db"):
     @app.route('/api/hobbies/<int:hobby_id>/stats', methods=['GET'])
     def get_hobby_stats(hobby_id):
         """Get statistics for a hobby."""
+        db = get_db()
         hobby = db.get_hobby(hobby_id)
         if not hobby:
             return jsonify({'error': 'Hobby not found'}), 404
@@ -93,6 +108,7 @@ def create_app(db_path: str = "hobby_budget.db"):
     @app.route('/api/expenses', methods=['GET'])
     def get_expenses():
         """Get all expenses, optionally filtered by hobby."""
+        db = get_db()
         hobby_id = request.args.get('hobby_id', type=int)
         expenses = db.list_expenses(hobby_id)
         return jsonify([{
@@ -106,6 +122,7 @@ def create_app(db_path: str = "hobby_budget.db"):
     @app.route('/api/expenses', methods=['POST'])
     def add_expense():
         """Add a new expense."""
+        db = get_db()
         data = request.get_json()
         try:
             expense = Expense(
@@ -125,6 +142,7 @@ def create_app(db_path: str = "hobby_budget.db"):
     @app.route('/api/activities', methods=['GET'])
     def get_activities():
         """Get all activities, optionally filtered by hobby."""
+        db = get_db()
         hobby_id = request.args.get('hobby_id', type=int)
         activities = db.list_activities(hobby_id)
         return jsonify([{
@@ -138,6 +156,7 @@ def create_app(db_path: str = "hobby_budget.db"):
     @app.route('/api/activities', methods=['POST'])
     def add_activity():
         """Add a new activity."""
+        db = get_db()
         data = request.get_json()
         try:
             activity = Activity(
@@ -157,6 +176,7 @@ def create_app(db_path: str = "hobby_budget.db"):
     @app.route('/api/summary', methods=['GET'])
     def get_summary():
         """Get summary of all hobbies."""
+        db = get_db()
         hobbies = db.list_hobbies()
         summary = []
         for hobby in hobbies:
@@ -172,11 +192,6 @@ def create_app(db_path: str = "hobby_budget.db"):
                 'expense_per_hour': expense_per_hour
             })
         return jsonify(summary)
-    
-    @app.teardown_appcontext
-    def close_db(error):
-        """Close database connection on app context teardown."""
-        pass  # Database connection is managed by the db instance
     
     return app
 
