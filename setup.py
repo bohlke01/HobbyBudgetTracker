@@ -16,7 +16,7 @@ setup(
     url="https://github.com/bohlke01/HobbyBudgetTracker",
     packages=find_packages(),
     package_data={
-        "hobby_budget_tracker": ["templates/*", "static/*"],
+        "hobby_budget_tracker": ["templates/*"],
     },
     include_package_data=True,
     classifiers=[

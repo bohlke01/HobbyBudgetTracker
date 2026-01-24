@@ -505,15 +505,33 @@
                     hobbies.forEach(hobby => {
                         const li = document.createElement('li');
                         li.className = 'hobby-item';
-                        li.innerHTML = `
-                            <div class="item-info">
-                                <div class="item-name">${hobby.name}</div>
-                                <div class="item-desc">${hobby.description || 'No description'}</div>
-                            </div>
-                            <div class="item-actions">
-                                <button class="btn btn-danger" onclick="deleteHobby(${hobby.id}, '${hobby.name}')">Delete</button>
-                            </div>
-                        `;
+                        
+                        const itemInfo = document.createElement('div');
+                        itemInfo.className = 'item-info';
+                        
+                        const itemName = document.createElement('div');
+                        itemName.className = 'item-name';
+                        itemName.textContent = hobby.name;
+                        
+                        const itemDesc = document.createElement('div');
+                        itemDesc.className = 'item-desc';
+                        itemDesc.textContent = hobby.description || 'No description';
+                        
+                        itemInfo.appendChild(itemName);
+                        itemInfo.appendChild(itemDesc);
+                        
+                        const itemActions = document.createElement('div');
+                        itemActions.className = 'item-actions';
+                        
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.className = 'btn btn-danger';
+                        deleteBtn.textContent = 'Delete';
+                        deleteBtn.onclick = () => deleteHobby(hobby.id, hobby.name);
+                        
+                        itemActions.appendChild(deleteBtn);
+                        
+                        li.appendChild(itemInfo);
+                        li.appendChild(itemActions);
                         listEl.appendChild(li);
                     });
                 }
@@ -612,12 +630,21 @@
                         const li = document.createElement('li');
                         li.className = 'expense-item';
                         const date = new Date(expense.date).toLocaleDateString();
-                        li.innerHTML = `
-                            <div class="item-info">
-                                <div class="item-name">€${expense.amount.toFixed(2)} - ${hobbyMap[expense.hobby_id]}</div>
-                                <div class="item-desc">${expense.description || 'No description'} • ${date}</div>
-                            </div>
-                        `;
+                        
+                        const itemInfo = document.createElement('div');
+                        itemInfo.className = 'item-info';
+                        
+                        const itemName = document.createElement('div');
+                        itemName.className = 'item-name';
+                        itemName.textContent = `€${expense.amount.toFixed(2)} - ${hobbyMap[expense.hobby_id]}`;
+                        
+                        const itemDesc = document.createElement('div');
+                        itemDesc.className = 'item-desc';
+                        itemDesc.textContent = `${expense.description || 'No description'} • ${date}`;
+                        
+                        itemInfo.appendChild(itemName);
+                        itemInfo.appendChild(itemDesc);
+                        li.appendChild(itemInfo);
                         listEl.appendChild(li);
                     });
                 }
@@ -681,12 +708,21 @@
                         const li = document.createElement('li');
                         li.className = 'activity-item';
                         const date = new Date(activity.date).toLocaleDateString();
-                        li.innerHTML = `
-                            <div class="item-info">
-                                <div class="item-name">${activity.duration_hours.toFixed(1)}h - ${hobbyMap[activity.hobby_id]}</div>
-                                <div class="item-desc">${activity.description || 'No description'} • ${date}</div>
-                            </div>
-                        `;
+                        
+                        const itemInfo = document.createElement('div');
+                        itemInfo.className = 'item-info';
+                        
+                        const itemName = document.createElement('div');
+                        itemName.className = 'item-name';
+                        itemName.textContent = `${activity.duration_hours.toFixed(1)}h - ${hobbyMap[activity.hobby_id]}`;
+                        
+                        const itemDesc = document.createElement('div');
+                        itemDesc.className = 'item-desc';
+                        itemDesc.textContent = `${activity.description || 'No description'} • ${date}`;
+                        
+                        itemInfo.appendChild(itemName);
+                        itemInfo.appendChild(itemDesc);
+                        li.appendChild(itemInfo);
                         listEl.appendChild(li);
                     });
                 }
@@ -742,21 +778,47 @@
                     summary.forEach(hobby => {
                         const card = document.createElement('div');
                         card.className = 'summary-card';
-                        card.innerHTML = `
-                            <h4>🎯 ${hobby.name}</h4>
-                            <div class="stat">
-                                <span>Total Expenses:</span>
-                                <span class="stat-value">€${hobby.total_expenses.toFixed(2)}</span>
-                            </div>
-                            <div class="stat">
-                                <span>Total Hours:</span>
-                                <span class="stat-value">${hobby.total_hours.toFixed(1)}h</span>
-                            </div>
-                            <div class="stat">
-                                <span>💰 Cost per Hour:</span>
-                                <span class="stat-value">${hobby.expense_per_hour ? '€' + hobby.expense_per_hour.toFixed(2) + '/h' : 'N/A'}</span>
-                            </div>
-                        `;
+                        
+                        const title = document.createElement('h4');
+                        title.textContent = `🎯 ${hobby.name}`;
+                        card.appendChild(title);
+                        
+                        // Total Expenses stat
+                        const expenseStat = document.createElement('div');
+                        expenseStat.className = 'stat';
+                        const expenseLabel = document.createElement('span');
+                        expenseLabel.textContent = 'Total Expenses:';
+                        const expenseValue = document.createElement('span');
+                        expenseValue.className = 'stat-value';
+                        expenseValue.textContent = `€${hobby.total_expenses.toFixed(2)}`;
+                        expenseStat.appendChild(expenseLabel);
+                        expenseStat.appendChild(expenseValue);
+                        card.appendChild(expenseStat);
+                        
+                        // Total Hours stat
+                        const hoursStat = document.createElement('div');
+                        hoursStat.className = 'stat';
+                        const hoursLabel = document.createElement('span');
+                        hoursLabel.textContent = 'Total Hours:';
+                        const hoursValue = document.createElement('span');
+                        hoursValue.className = 'stat-value';
+                        hoursValue.textContent = `${hobby.total_hours.toFixed(1)}h`;
+                        hoursStat.appendChild(hoursLabel);
+                        hoursStat.appendChild(hoursValue);
+                        card.appendChild(hoursStat);
+                        
+                        // Cost per Hour stat
+                        const costStat = document.createElement('div');
+                        costStat.className = 'stat';
+                        const costLabel = document.createElement('span');
+                        costLabel.textContent = '💰 Cost per Hour:';
+                        const costValue = document.createElement('span');
+                        costValue.className = 'stat-value';
+                        costValue.textContent = hobby.expense_per_hour ? `€${hobby.expense_per_hour.toFixed(2)}/h` : 'N/A';
+                        costStat.appendChild(costLabel);
+                        costStat.appendChild(costValue);
+                        card.appendChild(costStat);
+                        
                         contentEl.appendChild(card);
                     });
                 }

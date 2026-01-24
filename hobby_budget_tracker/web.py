@@ -198,11 +198,15 @@ def create_app(db_path: str = "hobby_budget.db"):
 
 def main():
     """Main entry point for web interface."""
+    import os
     app = create_app()
+    debug_mode = os.environ.get('FLASK_DEBUG', '0') == '1'
     print("Starting Hobby Budget Tracker Web Interface...")
     print("Access the application at: http://localhost:5000")
+    if not debug_mode:
+        print("Note: Running in production mode. Set FLASK_DEBUG=1 for debug mode.")
     print("Press Ctrl+C to stop the server")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
 
 
 if __name__ == "__main__":
