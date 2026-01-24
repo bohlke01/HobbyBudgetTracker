@@ -12,6 +12,8 @@ A cross-platform Python application to track budgets and activities for differen
 - 📊 Calculate key KPI: **Expenses per Hour** / Zentrale KPI berechnen: **Ausgaben pro Stunde**
 - 💾 SQLite database for data persistence / SQLite-Datenbank für Datenpersistenz
 - 🖥️ Simple command-line interface / Einfache Kommandozeilen-Schnittstelle
+- 🌐 **Responsive web interface** / **Responsive Weboberfläche**
+- 📱 Mobile-friendly design / Mobilfreundliches Design
 - 🌍 Cross-platform (Windows, macOS, Linux) / Plattformübergreifend
 
 ## Installation
@@ -35,6 +37,38 @@ python -m hobby_budget_tracker
 ```
 
 ## Usage / Verwendung
+
+### Web Interface / Weboberfläche (Recommended / Empfohlen)
+
+The easiest way to use Hobby Budget Tracker is through the web interface:
+
+Die einfachste Art, Hobby Budget Tracker zu verwenden, ist über die Weboberfläche:
+
+```bash
+# Start the web server / Webserver starten
+hobby-budget-web
+
+# Or run directly / Oder direkt ausführen
+python -m hobby_budget_tracker.web
+```
+
+Then open your browser and navigate to `http://localhost:5000`
+
+Öffnen Sie dann Ihren Browser und navigieren Sie zu `http://localhost:5000`
+
+The web interface features:
+- 📊 Dashboard with summary of all hobbies
+- ➕ Add and manage hobbies, expenses, and activities
+- 📱 Responsive design that works on mobile and desktop
+- 🎨 Modern, user-friendly interface
+
+Die Weboberfläche bietet:
+- 📊 Dashboard mit Zusammenfassung aller Hobbys
+- ➕ Hobbys, Ausgaben und Aktivitäten hinzufügen und verwalten
+- 📱 Responsives Design für Mobilgeräte und Desktop
+- 🎨 Moderne, benutzerfreundliche Oberfläche
+
+### Command-Line Interface / Kommandozeilen-Schnittstelle
 
 ### Managing Hobbies / Hobbys verwalten
 

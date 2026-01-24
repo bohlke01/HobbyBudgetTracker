@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hobby Budget Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .tab.active {
+            color: #667eea;
+            background: white;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.25rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .hobby-list, .expense-list, .activity-list {
+            list-style: none;
+        }
+
+        .hobby-item, .expense-item, .activity-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .hobby-item:hover, .expense-item:hover, .activity-item:hover {
+            background: #e9ecef;
+        }
+
+        .item-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .item-desc {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .summary-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 0.9rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .tab {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+                min-width: 100px;
+            }
+
+            .hobby-item, .expense-item, .activity-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            input, select, textarea {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.3rem;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Hobby Budget Tracker</h1>
+            <p>Track expenses and activities for your hobbies</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('summary')">📊 Summary</button>
+            <button class="tab" onclick="showTab('hobbies')">🎯 Hobbies</button>
+            <button class="tab" onclick="showTab('expenses')">💰 Expenses</button>
+            <button class="tab" onclick="showTab('activities')">⏱️ Activities</button>
+        </div>
+
+        <div class="content">
+            <!-- Summary Tab -->
+            <div id="summary-tab" class="tab-content active">
+                <div id="summary-message" class="message"></div>
+                <div id="summary-content" class="summary-grid"></div>
+                <div id="summary-loading" class="loading" style="display: none;">Loading...</div>
+            </div>
+
+            <!-- Hobbies Tab -->
+            <div id="hobbies-tab" class="tab-content">
+                <div id="hobby-message" class="message"></div>
+                
+                <div class="card">
+                    <h3>Add New Hobby</h3>
+                    <form id="hobby-form">
+                        <div class="form-group">
+                            <label for="hobby-name">Hobby Name *</label>
+                            <input type="text" id="hobby-name" required placeholder="e.g., Photography">
+                        </div>
+                        <div class="form-group">
+                            <label for="hobby-description">Description</label>
+                            <textarea id="hobby-description" placeholder="Optional description"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Hobby</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Your Hobbies</h3>
+                    <div id="hobbies-loading" class="loading" style="display: none;">Loading...</div>
+                    <ul id="hobbies-list" class="hobby-list"></ul>
+                </div>
+            </div>
+
+            <!-- Expenses Tab -->
+            <div id="expenses-tab" class="tab-content">
+                <div id="expense-message" class="message"></div>
+                
+                <div class="card">
+                    <h3>Add New Expense</h3>
+                    <form id="expense-form">
+                        <div class="form-group">
+                            <label for="expense-hobby">Hobby *</label>
+                            <select id="expense-hobby" required>
+                                <option value="">Select a hobby</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-amount">Amount (€) *</label>
+                            <input type="number" id="expense-amount" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-description">Description</label>
+                            <input type="text" id="expense-description" placeholder="e.g., New camera lens">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Expense</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Recent Expenses</h3>
+                    <div id="expenses-loading" class="loading" style="display: none;">Loading...</div>
+                    <ul id="expenses-list" class="expense-list"></ul>
+                </div>
+            </div>
+
+            <!-- Activities Tab -->
+            <div id="activities-tab" class="tab-content">
+                <div id="activity-message" class="message"></div>
+                
+                <div class="card">
+                    <h3>Add New Activity</h3>
+                    <form id="activity-form">
+                        <div class="form-group">
+                            <label for="activity-hobby">Hobby *</label>
+                            <select id="activity-hobby" required>
+                                <option value="">Select a hobby</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="activity-hours">Duration (hours) *</label>
+                            <input type="number" id="activity-hours" step="0.1" required placeholder="0.0">
+                        </div>
+                        <div class="form-group">
+                            <label for="activity-description">Description</label>
+                            <input type="text" id="activity-description" placeholder="e.g., Photo walk in the park">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Activity</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Recent Activities</h3>
+                    <div id="activities-loading" class="loading" style="display: none;">Loading...</div>
+                    <ul id="activities-list" class="activity-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Load data when switching tabs
+            if (tabName === 'summary') loadSummary();
+            if (tabName === 'hobbies') loadHobbies();
+            if (tabName === 'expenses') {
+                loadHobbiesForSelect('expense-hobby');
+                loadExpenses();
+            }
+            if (tabName === 'activities') {
+                loadHobbiesForSelect('activity-hobby');
+                loadActivities();
+            }
+        }
+
+        // Show message
+        function showMessage(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.className = `message ${type}`;
+            el.style.display = 'block';
+            setTimeout(() => {
+                el.style.display = 'none';
+            }, 5000);
+        }
+
+        // Load hobbies
+        async function loadHobbies() {
+            const loadingEl = document.getElementById('hobbies-loading');
+            const listEl = document.getElementById('hobbies-list');
+            
+            loadingEl.style.display = 'block';
+            try {
+                const response = await fetch('/api/hobbies');
+                const hobbies = await response.json();
+                
+                listEl.innerHTML = '';
+                if (hobbies.length === 0) {
+                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎯</div><p>No hobbies yet. Add your first hobby above!</p></div>';
+                } else {
+                    hobbies.forEach(hobby => {
+                        const li = document.createElement('li');
+                        li.className = 'hobby-item';
+                        li.innerHTML = `
+                            <div class="item-info">
+                                <div class="item-name">${hobby.name}</div>
+                                <div class="item-desc">${hobby.description || 'No description'}</div>
+                            </div>
+                            <div class="item-actions">
+                                <button class="btn btn-danger" onclick="deleteHobby(${hobby.id}, '${hobby.name}')">Delete</button>
+                            </div>
+                        `;
+                        listEl.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                showMessage('hobby-message', 'Error loading hobbies', 'error');
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // Load hobbies for select dropdown
+        async function loadHobbiesForSelect(selectId) {
+            try {
+                const response = await fetch('/api/hobbies');
+                const hobbies = await response.json();
+                
+                const select = document.getElementById(selectId);
+                select.innerHTML = '<option value="">Select a hobby</option>';
+                hobbies.forEach(hobby => {
+                    const option = document.createElement('option');
+                    option.value = hobby.id;
+                    option.textContent = hobby.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading hobbies:', error);
+            }
+        }
+
+        // Add hobby
+        document.getElementById('hobby-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('hobby-name').value;
+            const description = document.getElementById('hobby-description').value;
+            
+            try {
+                const response = await fetch('/api/hobbies', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description })
+                });
+                
+                if (response.ok) {
+                    showMessage('hobby-message', 'Hobby added successfully!', 'success');
+                    document.getElementById('hobby-form').reset();
+                    loadHobbies();
+                } else {
+                    const error = await response.json();
+                    showMessage('hobby-message', error.error || 'Error adding hobby', 'error');
+                }
+            } catch (error) {
+                showMessage('hobby-message', 'Error adding hobby', 'error');
+            }
+        });
+
+        // Delete hobby
+        async function deleteHobby(id, name) {
+            if (!confirm(`Delete hobby "${name}" and all its expenses and activities?`)) return;
+            
+            try {
+                const response = await fetch(`/api/hobbies/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    showMessage('hobby-message', 'Hobby deleted successfully!', 'success');
+                    loadHobbies();
+                } else {
+                    showMessage('hobby-message', 'Error deleting hobby', 'error');
+                }
+            } catch (error) {
+                showMessage('hobby-message', 'Error deleting hobby', 'error');
+            }
+        }
+
+        // Load expenses
+        async function loadExpenses() {
+            const loadingEl = document.getElementById('expenses-loading');
+            const listEl = document.getElementById('expenses-list');
+            
+            loadingEl.style.display = 'block';
+            try {
+                const [expensesResponse, hobbiesResponse] = await Promise.all([
+                    fetch('/api/expenses'),
+                    fetch('/api/hobbies')
+                ]);
+                const expenses = await expensesResponse.json();
+                const hobbies = await hobbiesResponse.json();
+                
+                const hobbyMap = {};
+                hobbies.forEach(h => hobbyMap[h.id] = h.name);
+                
+                listEl.innerHTML = '';
+                if (expenses.length === 0) {
+                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💰</div><p>No expenses yet. Add your first expense above!</p></div>';
+                } else {
+                    expenses.forEach(expense => {
+                        const li = document.createElement('li');
+                        li.className = 'expense-item';
+                        const date = new Date(expense.date).toLocaleDateString();
+                        li.innerHTML = `
+                            <div class="item-info">
+                                <div class="item-name">€${expense.amount.toFixed(2)} - ${hobbyMap[expense.hobby_id]}</div>
+                                <div class="item-desc">${expense.description || 'No description'} • ${date}</div>
+                            </div>
+                        `;
+                        listEl.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                showMessage('expense-message', 'Error loading expenses', 'error');
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // Add expense
+        document.getElementById('expense-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const hobby_id = document.getElementById('expense-hobby').value;
+            const amount = document.getElementById('expense-amount').value;
+            const description = document.getElementById('expense-description').value;
+            
+            try {
+                const response = await fetch('/api/expenses', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ hobby_id: parseInt(hobby_id), amount: parseFloat(amount), description })
+                });
+                
+                if (response.ok) {
+                    showMessage('expense-message', 'Expense added successfully!', 'success');
+                    document.getElementById('expense-form').reset();
+                    loadExpenses();
+                } else {
+                    const error = await response.json();
+                    showMessage('expense-message', error.error || 'Error adding expense', 'error');
+                }
+            } catch (error) {
+                showMessage('expense-message', 'Error adding expense', 'error');
+            }
+        });
+
+        // Load activities
+        async function loadActivities() {
+            const loadingEl = document.getElementById('activities-loading');
+            const listEl = document.getElementById('activities-list');
+            
+            loadingEl.style.display = 'block';
+            try {
+                const [activitiesResponse, hobbiesResponse] = await Promise.all([
+                    fetch('/api/activities'),
+                    fetch('/api/hobbies')
+                ]);
+                const activities = await activitiesResponse.json();
+                const hobbies = await hobbiesResponse.json();
+                
+                const hobbyMap = {};
+                hobbies.forEach(h => hobbyMap[h.id] = h.name);
+                
+                listEl.innerHTML = '';
+                if (activities.length === 0) {
+                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⏱️</div><p>No activities yet. Add your first activity above!</p></div>';
+                } else {
+                    activities.forEach(activity => {
+                        const li = document.createElement('li');
+                        li.className = 'activity-item';
+                        const date = new Date(activity.date).toLocaleDateString();
+                        li.innerHTML = `
+                            <div class="item-info">
+                                <div class="item-name">${activity.duration_hours.toFixed(1)}h - ${hobbyMap[activity.hobby_id]}</div>
+                                <div class="item-desc">${activity.description || 'No description'} • ${date}</div>
+                            </div>
+                        `;
+                        listEl.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                showMessage('activity-message', 'Error loading activities', 'error');
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // Add activity
+        document.getElementById('activity-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const hobby_id = document.getElementById('activity-hobby').value;
+            const duration_hours = document.getElementById('activity-hours').value;
+            const description = document.getElementById('activity-description').value;
+            
+            try {
+                const response = await fetch('/api/activities', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ hobby_id: parseInt(hobby_id), duration_hours: parseFloat(duration_hours), description })
+                });
+                
+                if (response.ok) {
+                    showMessage('activity-message', 'Activity added successfully!', 'success');
+                    document.getElementById('activity-form').reset();
+                    loadActivities();
+                } else {
+                    const error = await response.json();
+                    showMessage('activity-message', error.error || 'Error adding activity', 'error');
+                }
+            } catch (error) {
+                showMessage('activity-message', 'Error adding activity', 'error');
+            }
+        });
+
+        // Load summary
+        async function loadSummary() {
+            const loadingEl = document.getElementById('summary-loading');
+            const contentEl = document.getElementById('summary-content');
+            
+            loadingEl.style.display = 'block';
+            try {
+                const response = await fetch('/api/summary');
+                const summary = await response.json();
+                
+                contentEl.innerHTML = '';
+                if (summary.length === 0) {
+                    contentEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><p>No hobbies yet. Add your first hobby to get started!</p></div>';
+                } else {
+                    summary.forEach(hobby => {
+                        const card = document.createElement('div');
+                        card.className = 'summary-card';
+                        card.innerHTML = `
+                            <h4>🎯 ${hobby.name}</h4>
+                            <div class="stat">
+                                <span>Total Expenses:</span>
+                                <span class="stat-value">€${hobby.total_expenses.toFixed(2)}</span>
+                            </div>
+                            <div class="stat">
+                                <span>Total Hours:</span>
+                                <span class="stat-value">${hobby.total_hours.toFixed(1)}h</span>
+                            </div>
+                            <div class="stat">
+                                <span>💰 Cost per Hour:</span>
+                                <span class="stat-value">${hobby.expense_per_hour ? '€' + hobby.expense_per_hour.toFixed(2) + '/h' : 'N/A'}</span>
+                            </div>
+                        `;
+                        contentEl.appendChild(card);
+                    });
+                }
+            } catch (error) {
+                showMessage('summary-message', 'Error loading summary', 'error');
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // Load initial data
+        loadSummary();
+    </script>
+</body>
+</html>
