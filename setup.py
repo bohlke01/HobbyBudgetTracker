@@ -15,6 +15,10 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/bohlke01/HobbyBudgetTracker",
     packages=find_packages(),
+    package_data={
+        "hobby_budget_tracker": ["templates/*"],
+    },
+    include_package_data=True,
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: End Users/Desktop",
@@ -29,9 +33,13 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.7",
+    install_requires=[
+        "Flask>=2.0.0",
+    ],
     entry_points={
         "console_scripts": [
             "hobby-budget=hobby_budget_tracker.cli:main",
+            "hobby-budget-web=hobby_budget_tracker.web:main",
         ],
     },
 )
