@@ -1,0 +1,6 @@
+include README.md
+include LICENSE
+include requirements.txt
+include DEPLOYMENT.md
+include wsgi.py
+recursive-include hobby_budget_tracker/templates *

@@ -201,6 +201,14 @@ This helps you understand how much money you spend per hour of enjoyment for eac
 
 Dies hilft Ihnen zu verstehen, wie viel Geld Sie pro Stunde Vergnügen für jedes Hobby ausgeben.
 
+## Deployment / Bereitstellung
+
+### PythonAnywhere
+
+For detailed instructions on how to deploy this application on PythonAnywhere, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+Für detaillierte Anweisungen zur Bereitstellung dieser Anwendung auf PythonAnywhere siehe [DEPLOYMENT.md](DEPLOYMENT.md).
+
 ## License / Lizenz
 
 This project is licensed under the MIT License - see the LICENSE file for details.
