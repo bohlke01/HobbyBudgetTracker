@@ -28,17 +28,24 @@ import sys
 import os
 
 # Replace 'yourusername' with your PythonAnywhere username
-project_home = '/home/yourusername/HobbyBudgetTracker'
+# Or use environment variables (see below)
+project_home = os.environ.get('PROJECT_HOME', '/home/yourusername/HobbyBudgetTracker')
 if project_home not in sys.path:
     sys.path = [project_home] + sys.path
 
 # Set the database path
-db_path = os.path.join(project_home, 'hobby_budget.db')
+db_path = os.environ.get('DB_PATH', os.path.join(project_home, 'hobby_budget.db'))
 
 # Import and create the Flask app
 from hobby_budget_tracker.web import create_app
 application = create_app(db_path=db_path)
 ```
+
+## Environment Variables (Optional)
+
+Instead of editing paths in WSGI file, set in Web tab → Environment variables:
+- `PROJECT_HOME`: `/home/yourusername/HobbyBudgetTracker`
+- `DB_PATH`: (optional) custom database location
 
 ## Virtual Environment Path
 

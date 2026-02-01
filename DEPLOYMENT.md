@@ -65,12 +65,14 @@ This guide will walk you through the steps to deploy the Hobby Budget Tracker we
    import os
 
    # IMPORTANT: Replace 'yourusername' with your actual PythonAnywhere username
-   project_home = '/home/yourusername/HobbyBudgetTracker'
+   # Or set PROJECT_HOME environment variable to avoid editing this file
+   project_home = os.environ.get('PROJECT_HOME', '/home/yourusername/HobbyBudgetTracker')
    if project_home not in sys.path:
        sys.path = [project_home] + sys.path
 
    # Set the database path to a writable location
-   db_path = os.path.join(project_home, 'hobby_budget.db')
+   # You can set DB_PATH environment variable to override
+   db_path = os.environ.get('DB_PATH', os.path.join(project_home, 'hobby_budget.db'))
 
    # Import the Flask app
    from hobby_budget_tracker.web import create_app
@@ -79,8 +81,21 @@ This guide will walk you through the steps to deploy the Hobby Budget Tracker we
    application = create_app(db_path=db_path)
    ```
 
-5. **Critical**: Replace `yourusername` with your actual PythonAnywhere username in the `project_home` path
+5. **Critical**: Either:
+   - Replace `yourusername` with your actual PythonAnywhere username in the default path, OR
+   - Set the `PROJECT_HOME` environment variable (see Environment Variables section below)
 6. Click **Save**
+
+#### Setting Environment Variables (Optional)
+
+Instead of editing the WSGI file, you can set environment variables on PythonAnywhere:
+
+1. On the **Web** tab, scroll to the **Environment variables** section
+2. Click **Add a new environment variable**
+3. Set:
+   - **Name**: `PROJECT_HOME`
+   - **Value**: `/home/yourusername/HobbyBudgetTracker` (with your actual username)
+4. Optionally, set `DB_PATH` if you want to use a different database location
 
 ### 6. Set Up the Virtual Environment in Web App Configuration
 
