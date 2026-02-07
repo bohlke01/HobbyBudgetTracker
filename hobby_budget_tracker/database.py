@@ -29,6 +29,38 @@ class Database:
         self.conn = sqlite3.connect(self.db_path)
         self.conn.row_factory = sqlite3.Row
     
+    @staticmethod
+    def _row_to_hobby(row) -> Hobby:
+        """Convert database row to Hobby object."""
+        return Hobby(
+            id=row["id"],
+            name=row["name"],
+            description=row["description"],
+            created_at=datetime.fromisoformat(row["created_at"])
+        )
+    
+    @staticmethod
+    def _row_to_expense(row) -> Expense:
+        """Convert database row to Expense object."""
+        return Expense(
+            id=row["id"],
+            hobby_id=row["hobby_id"],
+            amount=row["amount"],
+            description=row["description"],
+            date=datetime.fromisoformat(row["date"])
+        )
+    
+    @staticmethod
+    def _row_to_activity(row) -> Activity:
+        """Convert database row to Activity object."""
+        return Activity(
+            id=row["id"],
+            hobby_id=row["hobby_id"],
+            duration_hours=row["duration_hours"],
+            description=row["description"],
+            date=datetime.fromisoformat(row["date"])
+        )
+    
     def _create_tables(self):
         """Create database tables if they don't exist."""
         cursor = self.conn.cursor()
@@ -88,43 +120,20 @@ class Database:
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM hobbies WHERE id = ?", (hobby_id,))
         row = cursor.fetchone()
-        if row:
-            return Hobby(
-                id=row["id"],
-                name=row["name"],
-                description=row["description"],
-                created_at=datetime.fromisoformat(row["created_at"])
-            )
-        return None
+        return self._row_to_hobby(row) if row else None
     
     def get_hobby_by_name(self, name: str) -> Optional[Hobby]:
         """Get a hobby by name."""
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM hobbies WHERE name = ?", (name,))
         row = cursor.fetchone()
-        if row:
-            return Hobby(
-                id=row["id"],
-                name=row["name"],
-                description=row["description"],
-                created_at=datetime.fromisoformat(row["created_at"])
-            )
-        return None
+        return self._row_to_hobby(row) if row else None
     
     def list_hobbies(self) -> List[Hobby]:
         """List all hobbies."""
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM hobbies ORDER BY name")
-        rows = cursor.fetchall()
-        return [
-            Hobby(
-                id=row["id"],
-                name=row["name"],
-                description=row["description"],
-                created_at=datetime.fromisoformat(row["created_at"])
-            )
-            for row in rows
-        ]
+        return [self._row_to_hobby(row) for row in cursor.fetchall()]
     
     def delete_hobby(self, hobby_id: int):
         """Delete a hobby and all related expenses and activities."""
@@ -156,17 +165,7 @@ class Database:
             cursor.execute("SELECT * FROM expenses WHERE hobby_id = ? ORDER BY date DESC", (hobby_id,))
         else:
             cursor.execute("SELECT * FROM expenses ORDER BY date DESC")
-        rows = cursor.fetchall()
-        return [
-            Expense(
-                id=row["id"],
-                hobby_id=row["hobby_id"],
-                amount=row["amount"],
-                description=row["description"],
-                date=datetime.fromisoformat(row["date"])
-            )
-            for row in rows
-        ]
+        return [self._row_to_expense(row) for row in cursor.fetchall()]
     
     def get_total_expenses(self, hobby_id: int) -> float:
         """Get total expenses for a hobby."""
@@ -193,17 +192,7 @@ class Database:
             cursor.execute("SELECT * FROM activities WHERE hobby_id = ? ORDER BY date DESC", (hobby_id,))
         else:
             cursor.execute("SELECT * FROM activities ORDER BY date DESC")
-        rows = cursor.fetchall()
-        return [
-            Activity(
-                id=row["id"],
-                hobby_id=row["hobby_id"],
-                duration_hours=row["duration_hours"],
-                description=row["description"],
-                date=datetime.fromisoformat(row["date"])
-            )
-            for row in rows
-        ]
+        return [self._row_to_activity(row) for row in cursor.fetchall()]
     
     def get_total_hours(self, hobby_id: int) -> float:
         """Get total hours spent on a hobby."""

@@ -17,6 +17,14 @@ class CLI:
         """Initialize CLI with database."""
         self.db = Database(db_path)
     
+    def _get_hobby_or_exit(self, name: str) -> Hobby:
+        """Get hobby by name or exit with error."""
+        hobby = self.db.get_hobby_by_name(name)
+        if not hobby:
+            print(f"Error: Hobby '{name}' not found", file=sys.stderr)
+            sys.exit(1)
+        return hobby
+    
     def run(self, args=None):
         """Run the CLI with provided arguments."""
         parser = argparse.ArgumentParser(
@@ -125,19 +133,13 @@ class CLI:
             return 0
         
         elif args.hobby_command == "delete":
-            hobby = self.db.get_hobby_by_name(args.name)
-            if not hobby:
-                print(f"Error: Hobby '{args.name}' not found", file=sys.stderr)
-                return 1
+            hobby = self._get_hobby_or_exit(args.name)
             self.db.delete_hobby(hobby.id)
             print(f"✓ Deleted hobby '{args.name}'")
             return 0
         
         elif args.hobby_command == "stats":
-            hobby = self.db.get_hobby_by_name(args.name)
-            if not hobby:
-                print(f"Error: Hobby '{args.name}' not found", file=sys.stderr)
-                return 1
+            hobby = self._get_hobby_or_exit(args.name)
             
             total_expenses = self.db.get_total_expenses(hobby.id)
             total_hours = self.db.get_total_hours(hobby.id)
@@ -161,10 +163,7 @@ class CLI:
     def _handle_expense_command(self, args):
         """Handle expense subcommands."""
         if args.expense_command == "add":
-            hobby = self.db.get_hobby_by_name(args.hobby)
-            if not hobby:
-                print(f"Error: Hobby '{args.hobby}' not found", file=sys.stderr)
-                return 1
+            hobby = self._get_hobby_or_exit(args.hobby)
             
             expense = Expense(
                 id=None,
@@ -179,10 +178,7 @@ class CLI:
         elif args.expense_command == "list":
             hobby_id = None
             if args.hobby:
-                hobby = self.db.get_hobby_by_name(args.hobby)
-                if not hobby:
-                    print(f"Error: Hobby '{args.hobby}' not found", file=sys.stderr)
-                    return 1
+                hobby = self._get_hobby_or_exit(args.hobby)
                 hobby_id = hobby.id
             
             expenses = self.db.list_expenses(hobby_id)
@@ -208,10 +204,7 @@ class CLI:
     def _handle_activity_command(self, args):
         """Handle activity subcommands."""
         if args.activity_command == "add":
-            hobby = self.db.get_hobby_by_name(args.hobby)
-            if not hobby:
-                print(f"Error: Hobby '{args.hobby}' not found", file=sys.stderr)
-                return 1
+            hobby = self._get_hobby_or_exit(args.hobby)
             
             activity = Activity(
                 id=None,
@@ -226,10 +219,7 @@ class CLI:
         elif args.activity_command == "list":
             hobby_id = None
             if args.hobby:
-                hobby = self.db.get_hobby_by_name(args.hobby)
-                if not hobby:
-                    print(f"Error: Hobby '{args.hobby}' not found", file=sys.stderr)
-                    return 1
+                hobby = self._get_hobby_or_exit(args.hobby)
                 hobby_id = hobby.id
             
             activities = self.db.list_activities(hobby_id)
