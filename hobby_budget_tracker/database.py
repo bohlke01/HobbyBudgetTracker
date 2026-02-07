@@ -37,7 +37,7 @@ class Database:
             name=row["name"],
             description=row["description"],
             created_at=datetime.fromisoformat(row["created_at"]),
-            target_value=row["target_value"] if row["target_value"] is not None else None
+            target_value=row["target_value"]
         )
     
     @staticmethod
