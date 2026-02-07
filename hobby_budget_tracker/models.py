@@ -1,9 +1,14 @@
 """
 Data models for Hobby Budget Tracker.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
+
+
+def default_datetime():
+    """Factory function for default datetime."""
+    return datetime.now()
 
 
 @dataclass
@@ -12,11 +17,7 @@ class Hobby:
     id: Optional[int]
     name: str
     description: str = ""
-    created_at: datetime = None
-    
-    def __post_init__(self):
-        if self.created_at is None:
-            self.created_at = datetime.now()
+    created_at: datetime = field(default_factory=default_datetime)
 
 
 @dataclass
@@ -26,11 +27,7 @@ class Expense:
     hobby_id: int
     amount: float
     description: str = ""
-    date: datetime = None
-    
-    def __post_init__(self):
-        if self.date is None:
-            self.date = datetime.now()
+    date: datetime = field(default_factory=default_datetime)
 
 
 @dataclass
@@ -40,8 +37,4 @@ class Activity:
     hobby_id: int
     duration_hours: float
     description: str = ""
-    date: datetime = None
-    
-    def __post_init__(self):
-        if self.date is None:
-            self.date = datetime.now()
+    date: datetime = field(default_factory=default_datetime)

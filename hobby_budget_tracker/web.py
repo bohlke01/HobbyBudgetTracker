@@ -28,6 +28,38 @@ def create_app(db_path: str = "hobby_budget.db"):
             g.db = Database(app.config['DB_PATH'])
         return g.db
     
+    @staticmethod
+    def _serialize_hobby(hobby: Hobby) -> dict:
+        """Convert Hobby to JSON-serializable dict."""
+        return {
+            'id': hobby.id,
+            'name': hobby.name,
+            'description': hobby.description,
+            'created_at': hobby.created_at.isoformat()
+        }
+    
+    @staticmethod
+    def _serialize_expense(expense: Expense) -> dict:
+        """Convert Expense to JSON-serializable dict."""
+        return {
+            'id': expense.id,
+            'hobby_id': expense.hobby_id,
+            'amount': expense.amount,
+            'description': expense.description,
+            'date': expense.date.isoformat()
+        }
+    
+    @staticmethod
+    def _serialize_activity(activity: Activity) -> dict:
+        """Convert Activity to JSON-serializable dict."""
+        return {
+            'id': activity.id,
+            'hobby_id': activity.hobby_id,
+            'duration_hours': activity.duration_hours,
+            'description': activity.description,
+            'date': activity.date.isoformat()
+        }
+    
     @app.teardown_appcontext
     def close_db(error):
         """Close database connection at end of request."""
@@ -46,12 +78,7 @@ def create_app(db_path: str = "hobby_budget.db"):
         """Get all hobbies."""
         db = get_db()
         hobbies = db.list_hobbies()
-        return jsonify([{
-            'id': h.id,
-            'name': h.name,
-            'description': h.description,
-            'created_at': h.created_at.isoformat()
-        } for h in hobbies])
+        return jsonify([_serialize_hobby(h) for h in hobbies])
     
     @app.route('/api/hobbies', methods=['POST'])
     def add_hobby():
@@ -111,13 +138,7 @@ def create_app(db_path: str = "hobby_budget.db"):
         db = get_db()
         hobby_id = request.args.get('hobby_id', type=int)
         expenses = db.list_expenses(hobby_id)
-        return jsonify([{
-            'id': e.id,
-            'hobby_id': e.hobby_id,
-            'amount': e.amount,
-            'description': e.description,
-            'date': e.date.isoformat()
-        } for e in expenses])
+        return jsonify([_serialize_expense(e) for e in expenses])
     
     @app.route('/api/expenses', methods=['POST'])
     def add_expense():
@@ -145,13 +166,7 @@ def create_app(db_path: str = "hobby_budget.db"):
         db = get_db()
         hobby_id = request.args.get('hobby_id', type=int)
         activities = db.list_activities(hobby_id)
-        return jsonify([{
-            'id': a.id,
-            'hobby_id': a.hobby_id,
-            'duration_hours': a.duration_hours,
-            'description': a.description,
-            'date': a.date.isoformat()
-        } for a in activities])
+        return jsonify([_serialize_activity(a) for a in activities])
     
     @app.route('/api/activities', methods=['POST'])
     def add_activity():
