@@ -28,7 +28,6 @@ def create_app(db_path: str = "hobby_budget.db"):
             g.db = Database(app.config['DB_PATH'])
         return g.db
     
-    @staticmethod
     def _serialize_hobby(hobby: Hobby) -> dict:
         """Convert Hobby to JSON-serializable dict."""
         return {
@@ -38,7 +37,6 @@ def create_app(db_path: str = "hobby_budget.db"):
             'created_at': hobby.created_at.isoformat()
         }
     
-    @staticmethod
     def _serialize_expense(expense: Expense) -> dict:
         """Convert Expense to JSON-serializable dict."""
         return {
@@ -49,7 +47,6 @@ def create_app(db_path: str = "hobby_budget.db"):
             'date': expense.date.isoformat()
         }
     
-    @staticmethod
     def _serialize_activity(activity: Activity) -> dict:
         """Convert Activity to JSON-serializable dict."""
         return {
