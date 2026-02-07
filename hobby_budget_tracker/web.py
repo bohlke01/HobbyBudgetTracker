@@ -125,11 +125,17 @@ def create_app(db_path: str = "hobby_budget.db"):
         db = get_db()
         data = request.get_json()
         try:
+            # Parse date if provided, otherwise use current datetime
+            expense_date = None
+            if 'date' in data and data['date']:
+                expense_date = datetime.fromisoformat(data['date'])
+            
             expense = Expense(
                 id=None,
                 hobby_id=data['hobby_id'],
                 amount=float(data['amount']),
-                description=data.get('description', '')
+                description=data.get('description', ''),
+                date=expense_date
             )
             expense_id = db.add_expense(expense)
             return jsonify({'id': expense_id, 'message': 'Expense added successfully'}), 201
@@ -159,11 +165,17 @@ def create_app(db_path: str = "hobby_budget.db"):
         db = get_db()
         data = request.get_json()
         try:
+            # Parse date if provided, otherwise use current datetime
+            activity_date = None
+            if 'date' in data and data['date']:
+                activity_date = datetime.fromisoformat(data['date'])
+            
             activity = Activity(
                 id=None,
                 hobby_id=data['hobby_id'],
                 duration_hours=float(data['duration_hours']),
-                description=data.get('description', '')
+                description=data.get('description', ''),
+                date=activity_date
             )
             activity_id = db.add_activity(activity)
             return jsonify({'id': activity_id, 'message': 'Activity added successfully'}), 201
@@ -192,6 +204,113 @@ def create_app(db_path: str = "hobby_budget.db"):
                 'expense_per_hour': expense_per_hour
             })
         return jsonify(summary)
+    
+    # Export endpoint
+    @app.route('/api/export', methods=['GET'])
+    def export_data():
+        """Export all data as JSON."""
+        db = get_db()
+        hobbies = db.list_hobbies()
+        expenses = db.list_expenses()
+        activities = db.list_activities()
+        
+        export_data = {
+            'version': '1.0',
+            'export_date': datetime.now().isoformat(),
+            'hobbies': [{
+                'id': h.id,
+                'name': h.name,
+                'description': h.description,
+                'created_at': h.created_at.isoformat()
+            } for h in hobbies],
+            'expenses': [{
+                'id': e.id,
+                'hobby_id': e.hobby_id,
+                'amount': e.amount,
+                'description': e.description,
+                'date': e.date.isoformat()
+            } for e in expenses],
+            'activities': [{
+                'id': a.id,
+                'hobby_id': a.hobby_id,
+                'duration_hours': a.duration_hours,
+                'description': a.description,
+                'date': a.date.isoformat()
+            } for a in activities]
+        }
+        
+        return jsonify(export_data)
+    
+    # Import endpoint
+    @app.route('/api/import', methods=['POST'])
+    def import_data():
+        """Import data from JSON."""
+        db = get_db()
+        data = request.get_json()
+        
+        if not data or 'version' not in data:
+            return jsonify({'error': 'Invalid import file format'}), 400
+        
+        try:
+            # Import hobbies first (with name mapping for existing hobbies)
+            hobby_id_map = {}  # Maps old IDs to new IDs
+            hobbies_imported = 0
+            if 'hobbies' in data:
+                for hobby_data in data['hobbies']:
+                    # Check if hobby with this name already exists
+                    existing_hobby = db.get_hobby_by_name(hobby_data['name'])
+                    if existing_hobby:
+                        hobby_id_map[hobby_data['id']] = existing_hobby.id
+                    else:
+                        # Create new hobby
+                        hobby = Hobby(
+                            id=None,
+                            name=hobby_data['name'],
+                            description=hobby_data.get('description', ''),
+                            created_at=datetime.fromisoformat(hobby_data['created_at']) if 'created_at' in hobby_data else None
+                        )
+                        new_id = db.add_hobby(hobby)
+                        hobby_id_map[hobby_data['id']] = new_id
+                        hobbies_imported += 1
+            
+            # Import expenses
+            expenses_imported = 0
+            if 'expenses' in data:
+                for expense_data in data['expenses']:
+                    if expense_data['hobby_id'] in hobby_id_map:
+                        expense = Expense(
+                            id=None,
+                            hobby_id=hobby_id_map[expense_data['hobby_id']],
+                            amount=expense_data['amount'],
+                            description=expense_data.get('description', ''),
+                            date=datetime.fromisoformat(expense_data['date'])
+                        )
+                        db.add_expense(expense)
+                        expenses_imported += 1
+            
+            # Import activities
+            activities_imported = 0
+            if 'activities' in data:
+                for activity_data in data['activities']:
+                    if activity_data['hobby_id'] in hobby_id_map:
+                        activity = Activity(
+                            id=None,
+                            hobby_id=hobby_id_map[activity_data['hobby_id']],
+                            duration_hours=activity_data['duration_hours'],
+                            description=activity_data.get('description', ''),
+                            date=datetime.fromisoformat(activity_data['date'])
+                        )
+                        db.add_activity(activity)
+                        activities_imported += 1
+            
+            return jsonify({
+                'message': 'Data imported successfully',
+                'hobbies_imported': hobbies_imported,
+                'expenses_imported': expenses_imported,
+                'activities_imported': activities_imported
+            }), 200
+        except Exception as e:
+            return jsonify({'error': f'Import failed: {str(e)}'}), 400
     
     return app
 
