@@ -36,7 +36,8 @@ class Database:
             id=row["id"],
             name=row["name"],
             description=row["description"],
-            created_at=datetime.fromisoformat(row["created_at"])
+            created_at=datetime.fromisoformat(row["created_at"]),
+            target_value=row["target_value"]
         )
     
     @staticmethod
@@ -71,9 +72,17 @@ class Database:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL UNIQUE,
                 description TEXT,
-                created_at TEXT NOT NULL
+                created_at TEXT NOT NULL,
+                target_value REAL
             )
         """)
+        
+        # Migrate existing hobbies table to add target_value column if it doesn't exist
+        try:
+            cursor.execute("SELECT target_value FROM hobbies LIMIT 1")
+        except sqlite3.OperationalError:
+            # Column doesn't exist, add it
+            cursor.execute("ALTER TABLE hobbies ADD COLUMN target_value REAL")
         
         # Expenses table
         cursor.execute("""
@@ -107,8 +116,8 @@ class Database:
         cursor = self.conn.cursor()
         try:
             cursor.execute(
-                "INSERT INTO hobbies (name, description, created_at) VALUES (?, ?, ?)",
-                (hobby.name, hobby.description, hobby.created_at.isoformat())
+                "INSERT INTO hobbies (name, description, created_at, target_value) VALUES (?, ?, ?, ?)",
+                (hobby.name, hobby.description, hobby.created_at.isoformat(), hobby.target_value)
             )
             self.conn.commit()
             return cursor.lastrowid
@@ -146,6 +155,30 @@ class Database:
         except sqlite3.Error:
             self.conn.rollback()
             raise
+    
+    def update_hobby(self, hobby_id: int, name: str = None, description: str = None, target_value: float = None):
+        """Update a hobby's information."""
+        cursor = self.conn.cursor()
+        hobby = self.get_hobby(hobby_id)
+        if not hobby:
+            raise ValueError(f"Hobby with id {hobby_id} not found")
+        
+        # Use existing values if not provided
+        if name is None:
+            name = hobby.name
+        if description is None:
+            description = hobby.description
+        if target_value is None:
+            target_value = hobby.target_value
+        
+        try:
+            cursor.execute(
+                "UPDATE hobbies SET name = ?, description = ?, target_value = ? WHERE id = ?",
+                (name, description, target_value, hobby_id)
+            )
+            self.conn.commit()
+        except sqlite3.IntegrityError:
+            raise DuplicateHobbyError(f"A hobby with the name '{name}' already exists")
     
     # Expense operations
     def add_expense(self, expense: Expense) -> int:
@@ -210,6 +243,56 @@ class Database:
         if total_hours > 0:
             return total_expenses / total_hours
         return None
+    
+    def get_expense_per_hour_time_series(self, hobby_id: int) -> List[dict]:
+        """Get cumulative expense per hour over time for charting.
+        
+        Returns a list of data points with date and cumulative expense per hour.
+        Each point represents the expense per hour up to that date.
+        """
+        cursor = self.conn.cursor()
+        
+        # Get all dates where there were expenses or activities
+        cursor.execute("""
+            SELECT DISTINCT date(date) as day
+            FROM (
+                SELECT date FROM expenses WHERE hobby_id = ?
+                UNION
+                SELECT date FROM activities WHERE hobby_id = ?
+            )
+            ORDER BY day
+        """, (hobby_id, hobby_id))
+        
+        dates = [row["day"] for row in cursor.fetchall()]
+        
+        time_series = []
+        for date_str in dates:
+            # Calculate cumulative expenses up to this date
+            cursor.execute("""
+                SELECT SUM(amount) as total 
+                FROM expenses 
+                WHERE hobby_id = ? AND date(date) <= ?
+            """, (hobby_id, date_str))
+            cumulative_expenses = cursor.fetchone()["total"] or 0.0
+            
+            # Calculate cumulative hours up to this date
+            cursor.execute("""
+                SELECT SUM(duration_hours) as total 
+                FROM activities 
+                WHERE hobby_id = ? AND date(date) <= ?
+            """, (hobby_id, date_str))
+            cumulative_hours = cursor.fetchone()["total"] or 0.0
+            
+            # Calculate expense per hour
+            expense_per_hour = cumulative_expenses / cumulative_hours if cumulative_hours > 0 else None
+            
+            if expense_per_hour is not None:
+                time_series.append({
+                    'date': date_str,
+                    'expense_per_hour': round(expense_per_hour, 2)
+                })
+        
+        return time_series
     
     def close(self):
         """Close database connection."""

@@ -18,6 +18,7 @@ class Hobby:
     name: str
     description: str = ""
     created_at: datetime = field(default_factory=default_datetime)
+    target_value: Optional[float] = None  # Target expense per hour (e.g., 10 euros/hour)
 
 
 @dataclass
