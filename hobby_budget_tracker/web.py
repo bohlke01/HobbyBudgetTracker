@@ -254,6 +254,7 @@ def create_app(db_path: str = "hobby_budget.db"):
         try:
             # Import hobbies first (with name mapping for existing hobbies)
             hobby_id_map = {}  # Maps old IDs to new IDs
+            hobbies_imported = 0
             if 'hobbies' in data:
                 for hobby_data in data['hobbies']:
                     # Check if hobby with this name already exists
@@ -270,8 +271,10 @@ def create_app(db_path: str = "hobby_budget.db"):
                         )
                         new_id = db.add_hobby(hobby)
                         hobby_id_map[hobby_data['id']] = new_id
+                        hobbies_imported += 1
             
             # Import expenses
+            expenses_imported = 0
             if 'expenses' in data:
                 for expense_data in data['expenses']:
                     if expense_data['hobby_id'] in hobby_id_map:
@@ -283,8 +286,10 @@ def create_app(db_path: str = "hobby_budget.db"):
                             date=datetime.fromisoformat(expense_data['date'])
                         )
                         db.add_expense(expense)
+                        expenses_imported += 1
             
             # Import activities
+            activities_imported = 0
             if 'activities' in data:
                 for activity_data in data['activities']:
                     if activity_data['hobby_id'] in hobby_id_map:
@@ -296,12 +301,13 @@ def create_app(db_path: str = "hobby_budget.db"):
                             date=datetime.fromisoformat(activity_data['date'])
                         )
                         db.add_activity(activity)
+                        activities_imported += 1
             
             return jsonify({
                 'message': 'Data imported successfully',
-                'hobbies_imported': len(data.get('hobbies', [])),
-                'expenses_imported': len(data.get('expenses', [])),
-                'activities_imported': len(data.get('activities', []))
+                'hobbies_imported': hobbies_imported,
+                'expenses_imported': expenses_imported,
+                'activities_imported': activities_imported
             }), 200
         except Exception as e:
             return jsonify({'error': f'Import failed: {str(e)}'}), 400
