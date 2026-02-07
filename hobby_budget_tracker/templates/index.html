@@ -339,7 +339,84 @@
             padding: 20px;
             color: #6c757d;
         }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            padding: 0;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 900px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .close:hover {
+            opacity: 0.8;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 20px auto;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -378,6 +455,11 @@
                         <div class="form-group">
                             <label for="hobby-description">Description</label>
                             <textarea id="hobby-description" placeholder="Optional description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="hobby-target-value">Target Cost per Hour (€)</label>
+                            <input type="number" id="hobby-target-value" step="0.01" min="0" placeholder="e.g., 10.00">
+                            <small style="color: #6c757d;">Optional: Your target budget per hour for this hobby</small>
                         </div>
                         <button type="submit" class="btn btn-primary">Add Hobby</button>
                     </form>
@@ -554,7 +636,9 @@
                         
                         const itemDesc = document.createElement('div');
                         itemDesc.className = 'item-desc';
-                        itemDesc.textContent = hobby.description || 'No description';
+                        const descText = hobby.description || 'No description';
+                        const targetText = hobby.target_value ? ` | Target: €${hobby.target_value.toFixed(2)}/h` : '';
+                        itemDesc.textContent = descText + targetText;
                         
                         itemInfo.appendChild(itemName);
                         itemInfo.appendChild(itemDesc);
@@ -562,11 +646,23 @@
                         const itemActions = document.createElement('div');
                         itemActions.className = 'item-actions';
                         
+                        const viewBtn = document.createElement('button');
+                        viewBtn.className = 'btn btn-primary';
+                        viewBtn.textContent = 'View Stats';
+                        viewBtn.onclick = () => showHobbyDetails(hobby.id);
+                        
+                        const editBtn = document.createElement('button');
+                        editBtn.className = 'btn';
+                        editBtn.textContent = 'Edit';
+                        editBtn.onclick = () => editHobby(hobby);
+                        
                         const deleteBtn = document.createElement('button');
                         deleteBtn.className = 'btn btn-danger';
                         deleteBtn.textContent = 'Delete';
                         deleteBtn.onclick = () => deleteHobby(hobby.id, hobby.name);
                         
+                        itemActions.appendChild(viewBtn);
+                        itemActions.appendChild(editBtn);
                         itemActions.appendChild(deleteBtn);
                         
                         li.appendChild(itemInfo);
@@ -606,12 +702,18 @@
             
             const name = document.getElementById('hobby-name').value;
             const description = document.getElementById('hobby-description').value;
+            const targetValue = document.getElementById('hobby-target-value').value;
+            
+            const payload = { name, description };
+            if (targetValue) {
+                payload.target_value = parseFloat(targetValue);
+            }
             
             try {
                 const response = await fetch('/api/hobbies', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, description })
+                    body: JSON.stringify(payload)
                 });
                 
                 if (response.ok) {
@@ -641,6 +743,209 @@
                 }
             } catch (error) {
                 showMessage('hobby-message', 'Error deleting hobby', 'error');
+            }
+        }
+
+        // Edit hobby
+        function editHobby(hobby) {
+            document.getElementById('edit-hobby-id').value = hobby.id;
+            document.getElementById('edit-hobby-name').value = hobby.name;
+            document.getElementById('edit-hobby-description').value = hobby.description || '';
+            document.getElementById('edit-hobby-target-value').value = hobby.target_value || '';
+            document.getElementById('edit-hobby-modal').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-hobby-modal').style.display = 'none';
+        }
+
+        // Submit edit hobby form
+        document.getElementById('edit-hobby-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('edit-hobby-id').value;
+            const name = document.getElementById('edit-hobby-name').value;
+            const description = document.getElementById('edit-hobby-description').value;
+            const targetValue = document.getElementById('edit-hobby-target-value').value;
+            
+            const payload = { name, description };
+            if (targetValue) {
+                payload.target_value = parseFloat(targetValue);
+            }
+            
+            try {
+                const response = await fetch(`/api/hobbies/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    showMessage('hobby-message', 'Hobby updated successfully!', 'success');
+                    closeEditModal();
+                    loadHobbies();
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Error updating hobby');
+                }
+            } catch (error) {
+                alert('Error updating hobby');
+            }
+        });
+
+        // Show hobby details with chart
+        let hobbyChart = null;
+        
+        async function showHobbyDetails(hobbyId) {
+            try {
+                // Fetch hobby stats and chart data
+                const [statsResponse, chartResponse] = await Promise.all([
+                    fetch(`/api/hobbies/${hobbyId}/stats`),
+                    fetch(`/api/hobbies/${hobbyId}/chart-data`)
+                ]);
+                
+                if (!statsResponse.ok || !chartResponse.ok) {
+                    alert('Error loading hobby details');
+                    return;
+                }
+                
+                const stats = await statsResponse.json();
+                const chartData = await chartResponse.json();
+                
+                // Update modal title
+                document.getElementById('modal-hobby-name').textContent = stats.hobby.name;
+                
+                // Update stats
+                const statsHtml = `
+                    <div class="stat">
+                        <span>Total Expenses:</span>
+                        <span class="stat-value">€${stats.total_expenses.toFixed(2)}</span>
+                    </div>
+                    <div class="stat">
+                        <span>Total Hours:</span>
+                        <span class="stat-value">${stats.total_hours.toFixed(1)}h</span>
+                    </div>
+                    <div class="stat">
+                        <span>💰 Cost per Hour:</span>
+                        <span class="stat-value">${stats.expense_per_hour ? '€' + stats.expense_per_hour.toFixed(2) + '/h' : 'N/A'}</span>
+                    </div>
+                    ${stats.hobby.target_value ? `<div class="stat"><span>🎯 Target:</span><span class="stat-value">€${stats.hobby.target_value.toFixed(2)}/h</span></div>` : ''}
+                `;
+                document.getElementById('hobby-stats').innerHTML = statsHtml;
+                
+                // Create chart
+                const ctx = document.getElementById('hobby-chart').getContext('2d');
+                
+                // Destroy previous chart if exists
+                if (hobbyChart) {
+                    hobbyChart.destroy();
+                }
+                
+                // Prepare chart data
+                const labels = chartData.time_series.map(d => d.date);
+                const data = chartData.time_series.map(d => d.expense_per_hour);
+                
+                const datasets = [
+                    {
+                        label: 'Expense per Hour (€/h)',
+                        data: data,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: false
+                    }
+                ];
+                
+                // Add target value line if exists
+                if (chartData.target_value) {
+                    datasets.push({
+                        label: 'Target (€/h)',
+                        data: new Array(labels.length).fill(chartData.target_value),
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        borderDash: [5, 5],
+                        fill: '+1',
+                        pointRadius: 0
+                    });
+                    
+                    // Add upper bound for green area
+                    datasets.push({
+                        label: 'Target Zone',
+                        data: new Array(labels.length).fill(0),
+                        borderColor: 'transparent',
+                        backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                        fill: '-1',
+                        pointRadius: 0
+                    });
+                }
+                
+                hobbyChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Expense per Hour Over Time'
+                            },
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Date'
+                                },
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Expense per Hour (€/h)'
+                                },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+                
+                // Show modal
+                document.getElementById('hobby-details-modal').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error showing hobby details:', error);
+                alert('Error loading hobby details');
+            }
+        }
+
+        function closeHobbyModal() {
+            document.getElementById('hobby-details-modal').style.display = 'none';
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const detailsModal = document.getElementById('hobby-details-modal');
+            const editModal = document.getElementById('edit-hobby-modal');
+            if (event.target === detailsModal) {
+                closeHobbyModal();
+            }
+            if (event.target === editModal) {
+                closeEditModal();
             }
         }
 
@@ -850,6 +1155,8 @@
                     summary.forEach(hobby => {
                         const card = document.createElement('div');
                         card.className = 'summary-card';
+                        card.style.cursor = 'pointer';
+                        card.onclick = () => showHobbyDetails(hobby.id);
                         
                         const title = document.createElement('h4');
                         title.textContent = `🎯 ${hobby.name}`;
@@ -890,6 +1197,28 @@
                         costStat.appendChild(costLabel);
                         costStat.appendChild(costValue);
                         card.appendChild(costStat);
+                        
+                        // Target value stat if exists
+                        if (hobby.target_value) {
+                            const targetStat = document.createElement('div');
+                            targetStat.className = 'stat';
+                            const targetLabel = document.createElement('span');
+                            targetLabel.textContent = '🎯 Target:';
+                            const targetValue = document.createElement('span');
+                            targetValue.className = 'stat-value';
+                            targetValue.textContent = `€${hobby.target_value.toFixed(2)}/h`;
+                            targetStat.appendChild(targetLabel);
+                            targetStat.appendChild(targetValue);
+                            card.appendChild(targetStat);
+                        }
+                        
+                        // Add click hint
+                        const clickHint = document.createElement('small');
+                        clickHint.textContent = 'Click to view chart';
+                        clickHint.style.color = '#6c757d';
+                        clickHint.style.display = 'block';
+                        clickHint.style.marginTop = '10px';
+                        card.appendChild(clickHint);
                         
                         contentEl.appendChild(card);
                     });
@@ -972,5 +1301,51 @@
         document.getElementById('expense-date').value = today;
         document.getElementById('activity-date').value = today;
     </script>
+
+    <!-- Hobby Details Modal -->
+    <div id="hobby-details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-hobby-name"></h2>
+                <button class="close" onclick="closeHobbyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="hobby-stats"></div>
+                <div class="chart-container">
+                    <canvas id="hobby-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Hobby Modal -->
+    <div id="edit-hobby-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Hobby</h2>
+                <button class="close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-hobby-form">
+                    <input type="hidden" id="edit-hobby-id">
+                    <div class="form-group">
+                        <label for="edit-hobby-name">Hobby Name *</label>
+                        <input type="text" id="edit-hobby-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-hobby-description">Description</label>
+                        <textarea id="edit-hobby-description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-hobby-target-value">Target Cost per Hour (€)</label>
+                        <input type="number" id="edit-hobby-target-value" step="0.01" min="0">
+                        <small style="color: #6c757d;">Optional: Your target budget per hour for this hobby</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Hobby</button>
+                    <button type="button" class="btn" onclick="closeEditModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
