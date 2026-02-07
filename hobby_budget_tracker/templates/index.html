@@ -798,6 +798,12 @@
         
         async function showHobbyDetails(hobbyId) {
             try {
+                // Check if Chart.js is available
+                if (typeof Chart === 'undefined') {
+                    alert('Chart library not loaded. Please check your internet connection or ad blocker settings.');
+                    return;
+                }
+                
                 // Fetch hobby stats and chart data
                 const [statsResponse, chartResponse] = await Promise.all([
                     fetch(`/api/hobbies/${hobbyId}/stats`),
