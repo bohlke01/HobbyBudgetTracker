@@ -576,6 +576,52 @@
         </div>
     </div>
 
+    <!-- Hobby Details Modal -->
+    <div id="hobby-details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-hobby-name"></h2>
+                <button class="close" onclick="closeHobbyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="hobby-stats"></div>
+                <div class="chart-container">
+                    <canvas id="hobby-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Hobby Modal -->
+    <div id="edit-hobby-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Hobby</h2>
+                <button class="close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-hobby-form">
+                    <input type="hidden" id="edit-hobby-id">
+                    <div class="form-group">
+                        <label for="edit-hobby-name">Hobby Name *</label>
+                        <input type="text" id="edit-hobby-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-hobby-description">Description</label>
+                        <textarea id="edit-hobby-description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-hobby-target-value">Target Cost per Hour (€)</label>
+                        <input type="number" id="edit-hobby-target-value" step="0.01" min="0">
+                        <small style="color: #6c757d;">Optional: Your target budget per hour for this hobby</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Hobby</button>
+                    <button type="button" class="btn" onclick="closeEditModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Tab switching
         function showTab(tabName) {
@@ -1307,51 +1353,5 @@
         document.getElementById('expense-date').value = today;
         document.getElementById('activity-date').value = today;
     </script>
-
-    <!-- Hobby Details Modal -->
-    <div id="hobby-details-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-hobby-name"></h2>
-                <button class="close" onclick="closeHobbyModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="hobby-stats"></div>
-                <div class="chart-container">
-                    <canvas id="hobby-chart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Hobby Modal -->
-    <div id="edit-hobby-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Edit Hobby</h2>
-                <button class="close" onclick="closeEditModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="edit-hobby-form">
-                    <input type="hidden" id="edit-hobby-id">
-                    <div class="form-group">
-                        <label for="edit-hobby-name">Hobby Name *</label>
-                        <input type="text" id="edit-hobby-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-hobby-description">Description</label>
-                        <textarea id="edit-hobby-description"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-hobby-target-value">Target Cost per Hour (€)</label>
-                        <input type="number" id="edit-hobby-target-value" step="0.01" min="0">
-                        <small style="color: #6c757d;">Optional: Your target budget per hour for this hobby</small>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Update Hobby</button>
-                    <button type="button" class="btn" onclick="closeEditModal()">Cancel</button>
-                </form>
-            </div>
-        </div>
-    </div>
 </body>
 </html>
