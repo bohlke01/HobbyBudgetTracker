@@ -34,7 +34,8 @@ def create_app(db_path: str = "hobby_budget.db"):
             'id': hobby.id,
             'name': hobby.name,
             'description': hobby.description,
-            'created_at': hobby.created_at.isoformat()
+            'created_at': hobby.created_at.isoformat(),
+            'target_value': hobby.target_value
         }
     
     def _serialize_expense(expense: Expense) -> dict:
@@ -83,10 +84,19 @@ def create_app(db_path: str = "hobby_budget.db"):
         db = get_db()
         data = request.get_json()
         try:
+            # Parse target_value if provided
+            target_value = None
+            if 'target_value' in data and data['target_value']:
+                try:
+                    target_value = float(data['target_value'])
+                except (ValueError, TypeError):
+                    pass
+            
             hobby = Hobby(
                 id=None,
                 name=data['name'],
-                description=data.get('description', '')
+                description=data.get('description', ''),
+                target_value=target_value
             )
             hobby_id = db.add_hobby(hobby)
             return jsonify({'id': hobby_id, 'message': 'Hobby added successfully'}), 201
@@ -105,6 +115,36 @@ def create_app(db_path: str = "hobby_budget.db"):
         db.delete_hobby(hobby_id)
         return jsonify({'message': 'Hobby deleted successfully'}), 200
     
+    @app.route('/api/hobbies/<int:hobby_id>', methods=['PUT'])
+    def update_hobby(hobby_id):
+        """Update a hobby."""
+        db = get_db()
+        hobby = db.get_hobby(hobby_id)
+        if not hobby:
+            return jsonify({'error': 'Hobby not found'}), 404
+        
+        data = request.get_json()
+        try:
+            # Parse target_value if provided
+            target_value = data.get('target_value')
+            if target_value is not None and target_value != '':
+                try:
+                    target_value = float(target_value)
+                except (ValueError, TypeError):
+                    target_value = None
+            
+            db.update_hobby(
+                hobby_id,
+                name=data.get('name'),
+                description=data.get('description'),
+                target_value=target_value
+            )
+            return jsonify({'message': 'Hobby updated successfully'}), 200
+        except DuplicateHobbyError as e:
+            return jsonify({'error': str(e)}), 400
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+    
     @app.route('/api/hobbies/<int:hobby_id>/stats', methods=['GET'])
     def get_hobby_stats(hobby_id):
         """Get statistics for a hobby."""
@@ -121,11 +161,27 @@ def create_app(db_path: str = "hobby_budget.db"):
             'hobby': {
                 'id': hobby.id,
                 'name': hobby.name,
-                'description': hobby.description
+                'description': hobby.description,
+                'target_value': hobby.target_value
             },
             'total_expenses': total_expenses,
             'total_hours': total_hours,
             'expense_per_hour': expense_per_hour
+        })
+    
+    @app.route('/api/hobbies/<int:hobby_id>/chart-data', methods=['GET'])
+    def get_hobby_chart_data(hobby_id):
+        """Get time series data for hobby chart."""
+        db = get_db()
+        hobby = db.get_hobby(hobby_id)
+        if not hobby:
+            return jsonify({'error': 'Hobby not found'}), 404
+        
+        time_series = db.get_expense_per_hour_time_series(hobby_id)
+        
+        return jsonify({
+            'time_series': time_series,
+            'target_value': hobby.target_value
         })
     
     # API Routes for Expenses
@@ -213,7 +269,8 @@ def create_app(db_path: str = "hobby_budget.db"):
                 'description': hobby.description,
                 'total_expenses': total_expenses,
                 'total_hours': total_hours,
-                'expense_per_hour': expense_per_hour
+                'expense_per_hour': expense_per_hour,
+                'target_value': hobby.target_value
             })
         return jsonify(summary)
     
