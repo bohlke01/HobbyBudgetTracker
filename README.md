@@ -155,13 +155,16 @@ HobbyBudgetTracker/
 │   ├── __main__.py          # Main entry point
 │   ├── models.py            # Data models (Hobby, Expense, Activity)
 │   ├── database.py          # SQLite database operations
-│   └── cli.py               # Command-line interface
+│   ├── cli.py               # Command-line interface
+│   ├── web.py               # Web interface (Flask)
+│   └── templates/           # HTML templates
 ├── tests/
 │   ├── __init__.py
 │   ├── test_database.py     # Database tests
-│   └── test_cli.py          # CLI tests
+│   ├── test_cli.py          # CLI tests
+│   └── test_web.py          # Web interface tests
 ├── setup.py                 # Package setup configuration
-├── requirements.txt         # Dependencies (none - uses stdlib only)
+├── requirements.txt         # Dependencies
 └── README.md               # This file
 ```
 
@@ -174,6 +177,7 @@ python -m unittest discover tests
 # Run specific test file / Bestimmte Test-Datei ausführen
 python -m unittest tests.test_database
 python -m unittest tests.test_cli
+python -m unittest tests.test_web
 ```
 
 ## Database / Datenbank
