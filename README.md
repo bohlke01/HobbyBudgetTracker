@@ -1,5 +1,9 @@
 # HobbyBudgetTracker
 
+![Test Coverage](https://img.shields.io/badge/coverage-55.5%25-yellow)
+![Tests](https://img.shields.io/badge/tests-41%20passing-brightgreen)
+![Python](https://img.shields.io/badge/python-3.7%2B-blue)
+
 Eine Cross-Platform-Anwendung in Python zum Tracken von Budgets und Aktivitäten für verschiedene Hobbys.
 
 A cross-platform Python application to track budgets and activities for different hobbies.
@@ -178,6 +182,31 @@ python -m unittest discover tests
 python -m unittest tests.test_database
 python -m unittest tests.test_cli
 python -m unittest tests.test_web
+
+# Run tests with coverage / Tests mit Coverage ausführen
+coverage run -m unittest discover tests
+coverage report
+```
+
+### Test Coverage / Testabdeckung
+
+The project has **41 tests** with **55.5% code coverage**:
+
+Das Projekt hat **41 Tests** mit **55,5% Codeabdeckung**:
+
+| Module | Coverage |
+|--------|----------|
+| `models.py` | 100% |
+| `__init__.py` | 100% |
+| `database.py` | 94% |
+| `cli.py` | 62% |
+| `web.py` | 1% (web interface requires integration tests) |
+
+To generate a detailed coverage report / Um einen detaillierten Coverage-Bericht zu erstellen:
+
+```bash
+coverage run -m unittest discover tests
+coverage html  # Generates htmlcov/index.html
 ```
 
 ## Database / Datenbank
