@@ -206,7 +206,7 @@ To generate a detailed coverage report / Um einen detaillierten Coverage-Bericht
 
 ```bash
 coverage run -m unittest discover tests
-coverage html  # Generates htmlcov/index.html
+coverage html  # Generates htmlcov/index.html / Erzeugt htmlcov/index.html
 ```
 
 ## Database / Datenbank
