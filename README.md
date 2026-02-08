@@ -1,5 +1,7 @@
 # HobbyBudgetTracker
 
+![Tests and Coverage](https://github.com/bohlke01/HobbyBudgetTracker/actions/workflows/test-coverage.yml/badge.svg)
+
 Eine Cross-Platform-Anwendung in Python zum Tracken von Budgets und Aktivitäten für verschiedene Hobbys.
 
 A cross-platform Python application to track budgets and activities for different hobbies.
@@ -20,7 +22,7 @@ A cross-platform Python application to track budgets and activities for differen
 
 ### Requirements / Voraussetzungen
 
-- Python 3.7 or higher / Python 3.7 oder höher
+- Python 3.12
 
 ### Install / Installation
 
@@ -155,13 +157,16 @@ HobbyBudgetTracker/
 │   ├── __main__.py          # Main entry point
 │   ├── models.py            # Data models (Hobby, Expense, Activity)
 │   ├── database.py          # SQLite database operations
-│   └── cli.py               # Command-line interface
+│   ├── cli.py               # Command-line interface
+│   ├── web.py               # Web interface (Flask)
+│   └── templates/           # HTML templates
 ├── tests/
 │   ├── __init__.py
 │   ├── test_database.py     # Database tests
-│   └── test_cli.py          # CLI tests
+│   ├── test_cli.py          # CLI tests
+│   └── test_web.py          # Web interface tests
 ├── setup.py                 # Package setup configuration
-├── requirements.txt         # Dependencies (none - uses stdlib only)
+├── requirements.txt         # Dependencies
 └── README.md               # This file
 ```
 
@@ -174,6 +179,12 @@ python -m unittest discover tests
 # Run specific test file / Bestimmte Test-Datei ausführen
 python -m unittest tests.test_database
 python -m unittest tests.test_cli
+python -m unittest tests.test_web
+
+# Run tests with coverage / Tests mit Coverage ausführen
+coverage run -m unittest discover tests
+coverage report
+coverage html  # Generates htmlcov/index.html / Erzeugt htmlcov/index.html
 ```
 
 ## Database / Datenbank
