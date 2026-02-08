@@ -3,7 +3,7 @@
 ![Tests and Coverage](https://github.com/bohlke01/HobbyBudgetTracker/actions/workflows/test-coverage.yml/badge.svg)
 ![Test Coverage](https://img.shields.io/badge/coverage-55.5%25-yellow)
 ![Tests](https://img.shields.io/badge/tests-41%20passing-brightgreen)
-![Python](https://img.shields.io/badge/python-3.7%2B-blue)
+![Python](https://img.shields.io/badge/python-3.8%2B-blue)
 
 Eine Cross-Platform-Anwendung in Python zum Tracken von Budgets und Aktivitäten für verschiedene Hobbys.
 

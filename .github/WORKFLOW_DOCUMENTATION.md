@@ -136,7 +136,7 @@ coverage html
 
 As of the latest run:
 - **Total Tests**: 41
-- **Overall Coverage**: 56%
+- **Overall Coverage**: 55.5%
 - **Module Breakdown**:
   - `models.py`: 100%
   - `__init__.py`: 100%
