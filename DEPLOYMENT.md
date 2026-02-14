@@ -2,6 +2,8 @@
 
 This guide will walk you through the steps to deploy the Hobby Budget Tracker web application on PythonAnywhere.
 
+> **💡 Want automated deployments?** After completing initial setup, see [CONTINUOUS_DEPLOYMENT.md](CONTINUOUS_DEPLOYMENT.md) to enable continuous deployment via GitHub Actions.
+
 ## Prerequisites
 
 - A PythonAnywhere account (free tier is sufficient)
@@ -203,6 +205,8 @@ tail -f /var/log/yourusername.pythonanywhere.com.error.log
 
 ## Updating Your Application
 
+### Manual Updates
+
 When you make changes to your code:
 
 1. Pull the latest changes in your Bash console:
@@ -218,6 +222,15 @@ When you make changes to your code:
    ```
 
 3. Reload your web app from the **Web** tab
+
+### Automatic Updates (Continuous Deployment)
+
+For automated deployments when you push code to GitHub, see [CONTINUOUS_DEPLOYMENT.md](CONTINUOUS_DEPLOYMENT.md). This will:
+- Automatically deploy changes when you push to the main branch
+- Reload your web application
+- Provide deployment status in GitHub Actions
+
+Setting up continuous deployment is recommended for easier maintenance and faster updates.
 
 ## Database Backup
 
