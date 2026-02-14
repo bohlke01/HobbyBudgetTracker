@@ -1,6 +1,7 @@
 # HobbyBudgetTracker
 
 ![Tests and Coverage](https://github.com/bohlke01/HobbyBudgetTracker/actions/workflows/test-coverage.yml/badge.svg)
+![Deploy to PythonAnywhere](https://github.com/bohlke01/HobbyBudgetTracker/actions/workflows/deploy-pythonanywhere.yml/badge.svg)
 
 Eine Cross-Platform-Anwendung in Python zum Tracken von Budgets und Aktivitäten für verschiedene Hobbys.
 
@@ -219,6 +220,12 @@ Dies hilft Ihnen zu verstehen, wie viel Geld Sie pro Stunde Vergnügen für jede
 For detailed instructions on how to deploy this application on PythonAnywhere, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 Für detaillierte Anweisungen zur Bereitstellung dieser Anwendung auf PythonAnywhere siehe [DEPLOYMENT.md](DEPLOYMENT.md).
+
+#### Continuous Deployment / Kontinuierliche Bereitstellung
+
+This repository includes continuous deployment to PythonAnywhere via GitHub Actions. See [CONTINUOUS_DEPLOYMENT.md](CONTINUOUS_DEPLOYMENT.md) for setup instructions.
+
+Dieses Repository enthält kontinuierliche Bereitstellung zu PythonAnywhere über GitHub Actions. Siehe [CONTINUOUS_DEPLOYMENT.md](CONTINUOUS_DEPLOYMENT.md) für Einrichtungsanweisungen.
 
 ## License / Lizenz
 
