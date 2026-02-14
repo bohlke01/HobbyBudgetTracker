@@ -405,6 +405,120 @@
             margin: 20px 0;
         }
 
+        /* Tooltip styles */
+        .tooltip-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            font-size: 12px;
+            cursor: help;
+            margin-left: 5px;
+            position: relative;
+        }
+
+        .tooltip-icon:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            white-space: nowrap;
+            font-size: 13px;
+            z-index: 1000;
+            margin-bottom: 5px;
+            min-width: 200px;
+            white-space: normal;
+            width: max-content;
+            max-width: 300px;
+        }
+
+        .tooltip-icon:hover::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
+        }
+
+        /* Help section styles */
+        .help-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .help-section h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-section p, .help-section ul {
+            color: #495057;
+            line-height: 1.6;
+        }
+
+        .help-section ul {
+            margin-left: 20px;
+        }
+
+        .help-section li {
+            margin-bottom: 8px;
+        }
+
+        .quick-tip {
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .quick-tip strong {
+            color: #667eea;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .faq-answer {
+            color: #6c757d;
+            line-height: 1.6;
+            padding-left: 15px;
+        }
+
+        .keyboard-shortcut {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            border: 1px solid #dee2e6;
+        }
+
         @media (max-width: 768px) {
             .modal-content {
                 width: 95%;
@@ -413,6 +527,12 @@
 
             .chart-container {
                 height: 300px;
+            }
+
+            .tooltip-icon:hover::after {
+                left: auto;
+                right: 0;
+                transform: none;
             }
         }
     </style>
@@ -431,6 +551,7 @@
             <button class="tab" onclick="showTab('expenses')">💰 Expenses</button>
             <button class="tab" onclick="showTab('activities')">⏱️ Activities</button>
             <button class="tab" onclick="showTab('import-export')">💾 Import/Export</button>
+            <button class="tab" onclick="showTab('help')">❓ Help</button>
         </div>
 
         <div class="content">
@@ -449,15 +570,24 @@
                     <h3>Add New Hobby</h3>
                     <form id="hobby-form">
                         <div class="form-group">
-                            <label for="hobby-name">Hobby Name *</label>
+                            <label for="hobby-name">
+                                Hobby Name *
+                                <span class="tooltip-icon" data-tooltip="Enter a unique name for your hobby (e.g., Photography, Gaming, Cooking)">?</span>
+                            </label>
                             <input type="text" id="hobby-name" required placeholder="e.g., Photography">
                         </div>
                         <div class="form-group">
-                            <label for="hobby-description">Description</label>
+                            <label for="hobby-description">
+                                Description
+                                <span class="tooltip-icon" data-tooltip="Optional: Add details about your hobby to help you remember what it includes">?</span>
+                            </label>
                             <textarea id="hobby-description" placeholder="Optional description"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="hobby-target-value">Target Cost per Hour (€)</label>
+                            <label for="hobby-target-value">
+                                Target Cost per Hour (€)
+                                <span class="tooltip-icon" data-tooltip="Set a budget goal for this hobby. The app will show if you're above or below your target.">?</span>
+                            </label>
                             <input type="number" id="hobby-target-value" step="0.01" min="0" placeholder="e.g., 10.00">
                             <small style="color: #6c757d;">Optional: Your target budget per hour for this hobby</small>
                         </div>
@@ -480,17 +610,26 @@
                     <h3>Add New Expense</h3>
                     <form id="expense-form">
                         <div class="form-group">
-                            <label for="expense-hobby">Hobby *</label>
+                            <label for="expense-hobby">
+                                Hobby *
+                                <span class="tooltip-icon" data-tooltip="Select which hobby this expense belongs to">?</span>
+                            </label>
                             <select id="expense-hobby" required>
                                 <option value="">Select a hobby</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="expense-amount">Amount (€) *</label>
+                            <label for="expense-amount">
+                                Amount (€) *
+                                <span class="tooltip-icon" data-tooltip="Enter how much you spent on this item or service">?</span>
+                            </label>
                             <input type="number" id="expense-amount" step="0.01" required placeholder="0.00">
                         </div>
                         <div class="form-group">
-                            <label for="expense-date">Date *</label>
+                            <label for="expense-date">
+                                Date *
+                                <span class="tooltip-icon" data-tooltip="When did this expense occur? Defaults to today">?</span>
+                            </label>
                             <input type="date" id="expense-date" required>
                             <script>
                                 // Set default date to today immediately
@@ -498,7 +637,10 @@
                             </script>
                         </div>
                         <div class="form-group">
-                            <label for="expense-description">Description</label>
+                            <label for="expense-description">
+                                Description
+                                <span class="tooltip-icon" data-tooltip="Optional: What did you buy? (e.g., New camera lens, Concert ticket)">?</span>
+                            </label>
                             <input type="text" id="expense-description" placeholder="e.g., New camera lens">
                         </div>
                         <button type="submit" class="btn btn-primary">Add Expense</button>
@@ -520,13 +662,19 @@
                     <h3>Add New Activity</h3>
                     <form id="activity-form">
                         <div class="form-group">
-                            <label for="activity-hobby">Hobby *</label>
+                            <label for="activity-hobby">
+                                Hobby *
+                                <span class="tooltip-icon" data-tooltip="Select which hobby you spent time on">?</span>
+                            </label>
                             <select id="activity-hobby" required>
                                 <option value="">Select a hobby</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="activity-date">Date *</label>
+                            <label for="activity-date">
+                                Date *
+                                <span class="tooltip-icon" data-tooltip="When did you do this activity? Defaults to today">?</span>
+                            </label>
                             <input type="date" id="activity-date" required>
                             <script>
                                 // Set default date to today immediately
@@ -534,7 +682,10 @@
                             </script>
                         </div>
                         <div class="form-group">
-                            <label>Duration *</label>
+                            <label>
+                                Duration *
+                                <span class="tooltip-icon" data-tooltip="How long did you spend on this activity? Enter hours and/or minutes">?</span>
+                            </label>
                             <div style="display: flex; gap: 10px;">
                                 <div style="flex: 1;">
                                     <input type="number" id="activity-duration-hours" min="0" placeholder="Hours" value="0">
@@ -545,7 +696,10 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="activity-description">Description</label>
+                            <label for="activity-description">
+                                Description
+                                <span class="tooltip-icon" data-tooltip="Optional: What did you do? (e.g., Photo walk in the park, Played new game)">?</span>
+                            </label>
                             <input type="text" id="activity-description" placeholder="e.g., Photo walk in the park">
                         </div>
                         <button type="submit" class="btn btn-primary">Add Activity</button>
@@ -581,6 +735,144 @@
                     </form>
                 </div>
             </div>
+
+            <!-- Help Tab -->
+            <div id="help-tab" class="tab-content">
+                <div class="card">
+                    <h3>📘 Getting Started</h3>
+                    <div class="help-section">
+                        <h4>🎯 Welcome to Hobby Budget Tracker!</h4>
+                        <p>This application helps you track expenses and time spent on your hobbies. Here's how to get started:</p>
+                        <ol>
+                            <li><strong>Add a Hobby:</strong> Go to the Hobbies tab and create your first hobby (e.g., Photography, Gaming, Cooking)</li>
+                            <li><strong>Track Expenses:</strong> Record what you spend on equipment, materials, or services for your hobby</li>
+                            <li><strong>Log Activities:</strong> Track how much time you spend enjoying your hobby</li>
+                            <li><strong>View Statistics:</strong> Check your Summary to see the cost per hour for each hobby</li>
+                        </ol>
+                    </div>
+
+                    <div class="quick-tip">
+                        <strong>💡 Quick Tip:</strong> The key metric is "Cost per Hour" - this shows how much you're spending per hour of enjoyment. Lower values mean better value for your time!
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>❓ Frequently Asked Questions</h3>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">🎯 What is a Target Cost per Hour?</div>
+                        <div class="faq-answer">
+                            The target cost per hour is your personal budget goal for a hobby. For example, if you set a target of €10/hour, 
+                            you want to keep your spending at or below €10 for every hour you spend on that hobby. The app will show you 
+                            whether you're above or below your target.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">💰 How is Cost per Hour calculated?</div>
+                        <div class="faq-answer">
+                            Cost per Hour = Total Expenses ÷ Total Hours<br><br>
+                            For example: If you spent €300 on photography equipment and logged 30 hours of photography activities, 
+                            your cost per hour is €300 ÷ 30 = €10/hour.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">📊 How do I see detailed statistics for a hobby?</div>
+                        <div class="faq-answer">
+                            Click on any hobby in the Summary tab or Hobbies tab to open a detailed view with statistics and a chart 
+                            showing how your cost per hour changes over time.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">⏱️ Can I enter activities in minutes?</div>
+                        <div class="faq-answer">
+                            Yes! When adding an activity, you can use both the Hours and Minutes fields. For example, enter 1 hour and 
+                            30 minutes for a 1.5-hour activity. The app will automatically convert it to decimal hours.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">💾 How do I backup my data?</div>
+                        <div class="faq-answer">
+                            Go to the Import/Export tab and click "Export Data". This will download a JSON file with all your hobbies, 
+                            expenses, and activities. Keep this file safe as a backup. You can import it later to restore your data.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">🔄 Can I track the same hobby across multiple devices?</div>
+                        <div class="faq-answer">
+                            Yes! Export your data from one device and import it on another. The app will merge the data intelligently, 
+                            avoiding duplicate hobbies with the same name.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>💡 Tips & Best Practices</h3>
+                    
+                    <div class="help-section">
+                        <h4>📝 Tracking Tips</h4>
+                        <ul>
+                            <li><strong>Be Consistent:</strong> Log your activities regularly to get accurate cost per hour metrics</li>
+                            <li><strong>Include All Expenses:</strong> Don't forget small purchases - they add up!</li>
+                            <li><strong>Use Descriptions:</strong> Add notes to expenses and activities to remember what they were for</li>
+                            <li><strong>Set Realistic Targets:</strong> Start with a comfortable target cost per hour and adjust as needed</li>
+                        </ul>
+                    </div>
+
+                    <div class="help-section">
+                        <h4>📊 Understanding Your Data</h4>
+                        <ul>
+                            <li><strong>High Cost per Hour?</strong> You might have expensive equipment costs. This can improve as you spend more time with your hobby</li>
+                            <li><strong>Low Cost per Hour?</strong> Great! You're getting good value from your hobby spending</li>
+                            <li><strong>Track Over Time:</strong> Initial costs are often higher (equipment purchases). The chart shows how this improves</li>
+                        </ul>
+                    </div>
+
+                    <div class="quick-tip">
+                        <strong>💡 Pro Tip:</strong> Hobbies with high initial equipment costs (like photography or gaming) will have high cost per hour at first. 
+                        This naturally decreases as you spend more time enjoying your hobby!
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🎨 Feature Overview</h3>
+                    
+                    <div class="help-section">
+                        <h4>📊 Summary Tab</h4>
+                        <p>View all your hobbies at a glance with their total expenses, hours spent, and cost per hour. Click on any hobby card to see detailed statistics and charts.</p>
+                    </div>
+
+                    <div class="help-section">
+                        <h4>🎯 Hobbies Tab</h4>
+                        <p>Add new hobbies, set target budgets, and manage your existing hobbies. You can edit or delete hobbies as needed.</p>
+                    </div>
+
+                    <div class="help-section">
+                        <h4>💰 Expenses Tab</h4>
+                        <p>Record all money spent on your hobbies. Include equipment, materials, subscriptions, and any other costs.</p>
+                    </div>
+
+                    <div class="help-section">
+                        <h4>⏱️ Activities Tab</h4>
+                        <p>Log time spent enjoying your hobbies. This helps calculate the important "cost per hour" metric.</p>
+                    </div>
+
+                    <div class="help-section">
+                        <h4>💾 Import/Export Tab</h4>
+                        <p>Backup your data or transfer it between devices using JSON export/import functionality.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>❓ Need More Help?</h3>
+                    <p>Look for the <span class="tooltip-icon" data-tooltip="Like this one!">?</span> icons throughout the app - they provide contextual help for each field.</p>
+                    <p style="margin-top: 10px;">All your data is stored locally in your browser. No account needed!</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -611,15 +903,24 @@
                 <form id="edit-hobby-form">
                     <input type="hidden" id="edit-hobby-id">
                     <div class="form-group">
-                        <label for="edit-hobby-name">Hobby Name *</label>
+                        <label for="edit-hobby-name">
+                            Hobby Name *
+                            <span class="tooltip-icon" data-tooltip="Enter a unique name for your hobby">?</span>
+                        </label>
                         <input type="text" id="edit-hobby-name" required>
                     </div>
                     <div class="form-group">
-                        <label for="edit-hobby-description">Description</label>
+                        <label for="edit-hobby-description">
+                            Description
+                            <span class="tooltip-icon" data-tooltip="Optional: Add details about your hobby">?</span>
+                        </label>
                         <textarea id="edit-hobby-description"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="edit-hobby-target-value">Target Cost per Hour (€)</label>
+                        <label for="edit-hobby-target-value">
+                            Target Cost per Hour (€)
+                            <span class="tooltip-icon" data-tooltip="Set a budget goal for this hobby">?</span>
+                        </label>
                         <input type="number" id="edit-hobby-target-value" step="0.01" min="0">
                         <small style="color: #6c757d;">Optional: Your target budget per hour for this hobby</small>
                     </div>
@@ -675,7 +976,7 @@
                 
                 listEl.innerHTML = '';
                 if (hobbies.length === 0) {
-                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎯</div><p>No hobbies yet. Add your first hobby above!</p></div>';
+                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎯</div><p>No hobbies yet. Add your first hobby above!</p><small style="color: #6c757d; margin-top: 10px; display: block;">💡 Tip: Start by adding a hobby you spend time and money on, like Photography, Gaming, or Cooking</small></div>';
                 } else {
                     hobbies.forEach(hobby => {
                         const li = document.createElement('li');
@@ -1032,7 +1333,7 @@
                 
                 listEl.innerHTML = '';
                 if (expenses.length === 0) {
-                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💰</div><p>No expenses yet. Add your first expense above!</p></div>';
+                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💰</div><p>No expenses yet. Add your first expense above!</p><small style="color: #6c757d; margin-top: 10px; display: block;">💡 Tip: Track all hobby-related purchases - equipment, materials, subscriptions, etc.</small></div>';
                 } else {
                     expenses.forEach(expense => {
                         const li = document.createElement('li');
@@ -1116,7 +1417,7 @@
                 
                 listEl.innerHTML = '';
                 if (activities.length === 0) {
-                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⏱️</div><p>No activities yet. Add your first activity above!</p></div>';
+                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⏱️</div><p>No activities yet. Add your first activity above!</p><small style="color: #6c757d; margin-top: 10px; display: block;">💡 Tip: Log time spent enjoying your hobby to calculate cost per hour</small></div>';
                 } else {
                     activities.forEach(activity => {
                         const li = document.createElement('li');
@@ -1214,7 +1515,7 @@
                 
                 contentEl.innerHTML = '';
                 if (summary.length === 0) {
-                    contentEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><p>No hobbies yet. Add your first hobby to get started!</p></div>';
+                    contentEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><p>No hobbies yet. Add your first hobby to get started!</p><small style="color: #6c757d; margin-top: 10px; display: block;">💡 Tip: Go to the Hobbies tab to add a hobby, then track your expenses and activities. Visit the Help tab for a complete guide!</small></div>';
                 } else {
                     summary.forEach(hobby => {
                         const card = document.createElement('div');
