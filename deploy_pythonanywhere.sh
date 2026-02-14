@@ -71,18 +71,18 @@ api_call() {
     fi
 }
 
-# Step 1: Pull latest code
-echo -e "${YELLOW}📥 Pulling latest code from GitHub...${NC}"
+# Note: This script reloads the web application but does not pull code
+# You need to set up automatic code pulling on PythonAnywhere separately
+# See CONTINUOUS_DEPLOYMENT.md Step 3 for setup options:
+#   - Option A: Manual git pull after deployment
+#   - Option B: Scheduled task to auto-pull
+#   - Option C: Git pull in WSGI configuration
 
-# Note: PythonAnywhere's console API endpoint requires an existing console ID
-# For a more robust solution, you might want to use their scheduled tasks or 
-# connect via SSH if available in your plan
-echo "   Using API to send git pull command..."
+echo -e "${YELLOW}ℹ️  This script will reload your web application.${NC}"
+echo -e "${YELLOW}   Make sure code updates are handled separately (see CONTINUOUS_DEPLOYMENT.md)${NC}"
+echo ""
 
-# We'll use a simpler approach - just reload the web app
-# The user should have their PythonAnywhere setup to auto-pull or use a webhook
-
-# Step 2: Reload web application
+# Step 1: Reload web application
 echo -e "${YELLOW}🔄 Reloading web application...${NC}"
 
 RELOAD_RESPONSE=$(api_call POST "/user/${PYTHONANYWHERE_USERNAME}/webapps/${DOMAIN}/reload/")
@@ -98,7 +98,7 @@ else
     fi
 fi
 
-# Step 3: Check web app status
+# Step 2: Check web app status
 echo -e "${YELLOW}🔍 Checking web application status...${NC}"
 
 STATUS_RESPONSE=$(api_call GET "/user/${PYTHONANYWHERE_USERNAME}/webapps/${DOMAIN}/")
@@ -112,16 +112,18 @@ fi
 
 echo ""
 echo -e "${GREEN}╔════════════════════════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}║            Deployment Complete!                            ║${NC}"
+echo -e "${GREEN}║            Reload Complete!                                ║${NC}"
 echo -e "${GREEN}╚════════════════════════════════════════════════════════════╝${NC}"
 echo ""
 echo -e "${BLUE}🌐 Your application:${NC} https://${DOMAIN}"
 echo ""
-echo -e "${YELLOW}Note:${NC} If you made code changes, make sure to:"
-echo "  1. Pull the latest code on PythonAnywhere (git pull)"
-echo "  2. The reload above will pick up the changes"
+echo -e "${YELLOW}⚠️  Important:${NC} This script only reloaded the web app."
 echo ""
-echo -e "${YELLOW}For automatic code updates:${NC}"
-echo "  - Set up a scheduled task on PythonAnywhere to run 'git pull'"
-echo "  - Or use PythonAnywhere's git integration features"
+echo -e "${YELLOW}To update code:${NC}"
+echo "  1. SSH/Console: cd ~/HobbyBudgetTracker && git pull origin main"
+echo "  2. Or set up auto-pull (see CONTINUOUS_DEPLOYMENT.md Step 3)"
+echo ""
+echo -e "${YELLOW}Recommended setup for full automation:${NC}"
+echo "  - Use a scheduled task on PythonAnywhere to run 'git pull' hourly"
+echo "  - See CONTINUOUS_DEPLOYMENT.md for detailed instructions"
 echo ""

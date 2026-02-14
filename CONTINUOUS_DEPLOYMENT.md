@@ -6,8 +6,9 @@ This document describes the continuous deployment (CD) setup for automatically d
 
 The continuous deployment system uses GitHub Actions to automatically:
 1. Detect when code is pushed to the main branch
-2. Trigger a deployment to your PythonAnywhere web application
-3. Reload the web application to apply changes
+2. Reload your PythonAnywhere web application
+
+**Important:** The GitHub Actions workflow **only reloads** the web application. You must separately configure automatic code pulling on PythonAnywhere (see Step 3 below) for a fully automated deployment.
 
 ## Prerequisites
 
@@ -113,11 +114,19 @@ The workflow (`.github/workflows/deploy-pythonanywhere.yml`) runs when:
 - Manually triggered via the GitHub Actions UI
 
 The workflow performs these steps:
-1. **Checkout code** - Gets the latest code from the repository
-2. **Deploy to PythonAnywhere** - Uses the PythonAnywhere API to:
-   - Send a command to pull the latest code (if console API available)
-   - Reload the web application
+1. **Checkout code** - Gets the latest code from the repository (for validation)
+2. **Reload Web App** - Uses the PythonAnywhere API to reload the web application
 3. **Summary** - Provides deployment status in the GitHub Actions summary
+
+**Note:** The workflow does NOT automatically pull code to PythonAnywhere. You must set up automatic code pulling separately (Step 3 above).
+
+### Complete Deployment Flow
+
+For a complete automated deployment:
+1. **You push code** → GitHub repository updated
+2. **GitHub Actions triggers** → Workflow runs
+3. **PythonAnywhere pulls code** → Via scheduled task/WSGI (you set this up in Step 3)
+4. **GitHub Actions reloads app** → New code becomes active
 
 ### PythonAnywhere API
 
@@ -127,7 +136,7 @@ The deployment uses PythonAnywhere's REST API:
 
 ### Manual Deployment Script
 
-You can also deploy manually using the provided script:
+You can also reload manually using the provided script:
 
 ```bash
 # Set environment variables
