@@ -431,7 +431,6 @@
             color: white;
             padding: 8px 12px;
             border-radius: 6px;
-            white-space: nowrap;
             font-size: 13px;
             z-index: 1000;
             margin-bottom: 5px;
@@ -976,7 +975,12 @@
                 
                 listEl.innerHTML = '';
                 if (hobbies.length === 0) {
-                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎯</div><p>No hobbies yet. Add your first hobby above!</p><small style="color: #6c757d; margin-top: 10px; display: block;">💡 Tip: Start by adding a hobby you spend time and money on, like Photography, Gaming, or Cooking</small></div>';
+                    listEl.innerHTML = '<div class="empty-state">' +
+                        '<div class="empty-state-icon">🎯</div>' +
+                        '<p>No hobbies yet. Add your first hobby above!</p>' +
+                        '<small style="color: #6c757d; margin-top: 10px; display: block;">' +
+                        '💡 Tip: Start by adding a hobby you spend time and money on, like Photography, Gaming, or Cooking' +
+                        '</small></div>';
                 } else {
                     hobbies.forEach(hobby => {
                         const li = document.createElement('li');
@@ -1333,7 +1337,12 @@
                 
                 listEl.innerHTML = '';
                 if (expenses.length === 0) {
-                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💰</div><p>No expenses yet. Add your first expense above!</p><small style="color: #6c757d; margin-top: 10px; display: block;">💡 Tip: Track all hobby-related purchases - equipment, materials, subscriptions, etc.</small></div>';
+                    listEl.innerHTML = '<div class="empty-state">' +
+                        '<div class="empty-state-icon">💰</div>' +
+                        '<p>No expenses yet. Add your first expense above!</p>' +
+                        '<small style="color: #6c757d; margin-top: 10px; display: block;">' +
+                        '💡 Tip: Track all hobby-related purchases - equipment, materials, subscriptions, etc.' +
+                        '</small></div>';
                 } else {
                     expenses.forEach(expense => {
                         const li = document.createElement('li');
@@ -1417,7 +1426,12 @@
                 
                 listEl.innerHTML = '';
                 if (activities.length === 0) {
-                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⏱️</div><p>No activities yet. Add your first activity above!</p><small style="color: #6c757d; margin-top: 10px; display: block;">💡 Tip: Log time spent enjoying your hobby to calculate cost per hour</small></div>';
+                    listEl.innerHTML = '<div class="empty-state">' +
+                        '<div class="empty-state-icon">⏱️</div>' +
+                        '<p>No activities yet. Add your first activity above!</p>' +
+                        '<small style="color: #6c757d; margin-top: 10px; display: block;">' +
+                        '💡 Tip: Log time spent enjoying your hobby to calculate cost per hour' +
+                        '</small></div>';
                 } else {
                     activities.forEach(activity => {
                         const li = document.createElement('li');
@@ -1515,7 +1529,12 @@
                 
                 contentEl.innerHTML = '';
                 if (summary.length === 0) {
-                    contentEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><p>No hobbies yet. Add your first hobby to get started!</p><small style="color: #6c757d; margin-top: 10px; display: block;">💡 Tip: Go to the Hobbies tab to add a hobby, then track your expenses and activities. Visit the Help tab for a complete guide!</small></div>';
+                    contentEl.innerHTML = '<div class="empty-state">' +
+                        '<div class="empty-state-icon">📊</div>' +
+                        '<p>No hobbies yet. Add your first hobby to get started!</p>' +
+                        '<small style="color: #6c757d; margin-top: 10px; display: block;">' +
+                        '💡 Tip: Go to the Hobbies tab to add a hobby, then track your expenses and activities. Visit the Help tab for a complete guide!' +
+                        '</small></div>';
                 } else {
                     summary.forEach(hobby => {
                         const card = document.createElement('div');
