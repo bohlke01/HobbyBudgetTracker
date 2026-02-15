@@ -13,101 +13,73 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #1E1E2E;
-            color: #E5E5E7;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
+            padding: 20px;
         }
 
-        /* Fixed Sidebar Navigation */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 70px;
-            height: 100vh;
-            background: #2A2A3C;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px 0;
-            gap: 10px;
-            z-index: 100;
-        }
-
-        .sidebar-item {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border-radius: 12px;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .sidebar-item:hover {
-            background: rgba(124, 58, 237, 0.2);
-        }
-
-        .sidebar-item.active {
-            background: linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%);
-        }
-
-        .sidebar-item svg {
-            width: 24px;
-            height: 24px;
-            stroke: #E5E5E7;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .sidebar-item .tooltip {
-            position: absolute;
-            left: 65px;
-            background: #2A2A3C;
-            padding: 8px 12px;
-            border-radius: 8px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-            font-size: 0.85rem;
-        }
-
-        .sidebar-item:hover .tooltip {
-            opacity: 1;
-        }
-
-        /* Main Container */
-        .main-container {
-            margin-left: 70px;
-            flex: 1;
-            padding: 40px;
-            max-width: 1400px;
-            width: 100%;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
         }
 
         .header {
-            margin-bottom: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin-bottom: 10px;
-            background: linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .header p {
-            color: #9CA3AF;
-            font-size: 1.1rem;
+            opacity: 0.9;
+            font-size: 1rem;
         }
 
-        /* Tab Content */
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .tab.active {
+            color: #667eea;
+            background: white;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
         .tab-content {
             display: none;
         }
@@ -122,127 +94,99 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Cards */
         .card {
-            background: #2A2A3C;
-            border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .card h3 {
-            color: #E5E5E7;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.25rem;
         }
 
-        /* Form Elements */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            color: #E5E5E7;
+            margin-bottom: 5px;
+            color: #495057;
             font-weight: 500;
-            font-size: 0.95rem;
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 14px;
-            background: #1E1E2E;
-            border: 2px solid #3A3A4C;
-            border-radius: 12px;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
             font-size: 1rem;
-            color: #E5E5E7;
-            transition: all 0.3s;
+            transition: border-color 0.3s;
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #7C3AED;
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+            border-color: #667eea;
         }
 
         textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 80px;
         }
 
-        input::placeholder, textarea::placeholder {
-            color: #6B7280;
-        }
-
-        small {
-            color: #9CA3AF;
-            font-size: 0.85rem;
-        }
-
-        /* Buttons */
         .btn {
-            padding: 14px 28px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
         .btn-danger {
-            background: #EF4444;
+            background: #dc3545;
             color: white;
-            padding: 10px 20px;
+            padding: 8px 16px;
             font-size: 0.9rem;
         }
 
         .btn-danger:hover {
-            background: #DC2626;
+            background: #c82333;
         }
 
-        .btn-secondary {
-            background: #3A3A4C;
-            color: #E5E5E7;
-        }
-
-        .btn-secondary:hover {
-            background: #4A4A5C;
-        }
-
-        /* Lists */
         .hobby-list, .expense-list, .activity-list {
             list-style: none;
         }
 
         .hobby-item, .expense-item, .activity-item {
-            background: #1E1E2E;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 12px;
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            border: 2px solid transparent;
-            transition: all 0.3s;
         }
 
         .hobby-item:hover, .expense-item:hover, .activity-item:hover {
-            border-color: #7C3AED;
-            transform: translateX(5px);
+            background: #e9ecef;
         }
 
         .item-info {
@@ -252,13 +196,13 @@
 
         .item-name {
             font-weight: 600;
-            color: #E5E5E7;
-            font-size: 1.15rem;
+            color: #333;
+            font-size: 1.1rem;
             margin-bottom: 5px;
         }
 
         .item-desc {
-            color: #9CA3AF;
+            color: #6c757d;
             font-size: 0.9rem;
         }
 
@@ -268,81 +212,135 @@
             margin-top: 10px;
         }
 
-        /* Summary Grid */
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
         }
 
         .summary-card {
-            background: linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.3);
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .summary-card:hover {
-            transform: translateY(-5px);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .summary-card h4 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
         }
 
         .stat {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 1rem;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
         }
 
         .stat-value {
             font-weight: 600;
         }
 
-        /* Messages */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 0.9rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .tab {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+                min-width: 100px;
+            }
+
+            .hobby-item, .expense-item, .activity-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            input, select, textarea {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.3rem;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+
         .message {
-            padding: 14px;
-            border-radius: 12px;
-            margin-bottom: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
             display: none;
         }
 
         .message.success {
-            background: rgba(34, 197, 94, 0.2);
-            color: #4ADE80;
-            border: 1px solid #22C55E;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
 
         .message.error {
-            background: rgba(239, 68, 68, 0.2);
-            color: #F87171;
-            border: 1px solid #EF4444;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
         .loading {
             text-align: center;
-            padding: 30px;
-            color: #9CA3AF;
+            padding: 20px;
+            color: #6c757d;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #9CA3AF;
-        }
-
-        .empty-state-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
-
-        /* Modal */
+        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
@@ -352,26 +350,26 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.5);
         }
 
         .modal-content {
-            background-color: #2A2A3C;
+            background-color: white;
             margin: 50px auto;
             padding: 0;
-            border-radius: 16px;
+            border-radius: 10px;
             width: 90%;
             max-width: 900px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             max-height: 90vh;
             overflow-y: auto;
         }
 
         .modal-header {
-            padding: 25px 35px;
-            background: linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%);
+            padding: 20px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-radius: 16px 16px 0 0;
+            border-radius: 10px 10px 0 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -379,12 +377,12 @@
 
         .modal-header h2 {
             margin: 0;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
         }
 
         .close {
             color: white;
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
             cursor: pointer;
             background: none;
@@ -398,339 +396,192 @@
         }
 
         .modal-body {
-            padding: 35px;
+            padding: 30px;
         }
 
         .chart-container {
             position: relative;
             height: 400px;
-            margin: 25px 0;
+            margin: 20px 0;
         }
 
-        /* Floating Action Button (FAB) */
-        .fab {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%);
-            color: white;
-            border: none;
-            font-size: 2rem;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
-            transition: all 0.3s;
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .fab:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 32px rgba(124, 58, 237, 0.6);
-        }
-
-        .fab.active {
-            transform: rotate(45deg);
-        }
-
-        .fab-menu {
-            position: fixed;
-            bottom: 110px;
-            right: 30px;
-            display: none;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 998;
-        }
-
-        .fab-menu.active {
-            display: flex;
-            animation: fadeInUp 0.3s;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fab-menu-item {
-            background: #2A2A3C;
-            color: #E5E5E7;
-            padding: 12px 24px;
-            border-radius: 12px;
-            border: 2px solid #7C3AED;
-            cursor: pointer;
-            font-weight: 500;
-            white-space: nowrap;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .fab-menu-item:hover {
-            background: linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%);
-            transform: translateX(-5px);
-        }
-
-        /* Mobile Responsive */
         @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: 60px;
-                top: auto;
-                bottom: 0;
-                flex-direction: row;
-                padding: 0 10px;
+            .modal-content {
+                width: 95%;
+                margin: 20px auto;
             }
 
-            .sidebar-item .tooltip {
-                display: none;
-            }
-
-            .main-container {
-                margin-left: 0;
-                margin-bottom: 60px;
-                padding: 20px;
-            }
-
-            .header h1 {
-                font-size: 1.8rem;
-            }
-
-            .header p {
-                font-size: 0.95rem;
-            }
-
-            .card {
-                padding: 20px;
-            }
-
-            .summary-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .hobby-item, .expense-item, .activity-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .item-actions {
-                width: 100%;
-            }
-
-            input, select, textarea {
-                font-size: 16px;
-            }
-
-            .fab {
-                bottom: 80px;
-            }
-
-            .fab-menu {
-                bottom: 160px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .main-container {
-                padding: 15px;
-            }
-
-            .header h1 {
-                font-size: 1.5rem;
+            .chart-container {
+                height: 300px;
             }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
-    <!-- Fixed Sidebar Navigation -->
-    <div class="sidebar">
-        <div class="sidebar-item active" onclick="showTab('summary')" data-tab="summary">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-            <span class="tooltip">Dashboard</span>
-        </div>
-        <div class="sidebar-item" onclick="showTab('hobbies')" data-tab="hobbies">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-            <span class="tooltip">Hobbies</span>
-        </div>
-        <div class="sidebar-item" onclick="showTab('expenses')" data-tab="expenses">
-            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            <span class="tooltip">Expenses</span>
-        </div>
-        <div class="sidebar-item" onclick="showTab('activities')" data-tab="activities">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span class="tooltip">Activities</span>
-        </div>
-        <div class="sidebar-item" onclick="showTab('import-export')" data-tab="import-export">
-            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            <span class="tooltip">Import/Export</span>
-        </div>
-    </div>
-
-    <!-- Main Container -->
-    <div class="main-container">
+    <div class="container">
         <div class="header">
             <h1>🎯 Hobby Budget Tracker</h1>
-            <p>Track expenses and activities for your hobbies with style</p>
+            <p>Track expenses and activities for your hobbies</p>
         </div>
 
-        <!-- Summary Tab -->
-        <div id="summary-tab" class="tab-content active">
-            <div id="summary-message" class="message"></div>
-            <div id="summary-content" class="summary-grid"></div>
-            <div id="summary-loading" class="loading" style="display: none;">Loading...</div>
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('summary')">📊 Summary</button>
+            <button class="tab" onclick="showTab('hobbies')">🎯 Hobbies</button>
+            <button class="tab" onclick="showTab('expenses')">💰 Expenses</button>
+            <button class="tab" onclick="showTab('activities')">⏱️ Activities</button>
+            <button class="tab" onclick="showTab('import-export')">💾 Import/Export</button>
         </div>
 
-        <!-- Hobbies Tab -->
-        <div id="hobbies-tab" class="tab-content">
-            <div id="hobby-message" class="message"></div>
-            
-            <div class="card">
-                <h3>Add New Hobby</h3>
-                <form id="hobby-form">
-                    <div class="form-group">
-                        <label for="hobby-name">Hobby Name *</label>
-                        <input type="text" id="hobby-name" required placeholder="e.g., Photography">
-                    </div>
-                    <div class="form-group">
-                        <label for="hobby-description">Description</label>
-                        <textarea id="hobby-description" placeholder="Optional description"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="hobby-target-value">Target Cost per Hour (€)</label>
-                        <input type="number" id="hobby-target-value" step="0.01" min="0" placeholder="e.g., 10.00">
-                        <small>Optional: Your target budget per hour for this hobby</small>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Add Hobby</button>
-                </form>
+        <div class="content">
+            <!-- Summary Tab -->
+            <div id="summary-tab" class="tab-content active">
+                <div id="summary-message" class="message"></div>
+                <div id="summary-content" class="summary-grid"></div>
+                <div id="summary-loading" class="loading" style="display: none;">Loading...</div>
             </div>
 
-            <div class="card">
-                <h3>Your Hobbies</h3>
-                <div id="hobbies-loading" class="loading" style="display: none;">Loading...</div>
-                <ul id="hobbies-list" class="hobby-list"></ul>
-            </div>
-        </div>
+            <!-- Hobbies Tab -->
+            <div id="hobbies-tab" class="tab-content">
+                <div id="hobby-message" class="message"></div>
+                
+                <div class="card">
+                    <h3>Add New Hobby</h3>
+                    <form id="hobby-form">
+                        <div class="form-group">
+                            <label for="hobby-name">Hobby Name *</label>
+                            <input type="text" id="hobby-name" required placeholder="e.g., Photography">
+                        </div>
+                        <div class="form-group">
+                            <label for="hobby-description">Description</label>
+                            <textarea id="hobby-description" placeholder="Optional description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="hobby-target-value">Target Cost per Hour (€)</label>
+                            <input type="number" id="hobby-target-value" step="0.01" min="0" placeholder="e.g., 10.00">
+                            <small style="color: #6c757d;">Optional: Your target budget per hour for this hobby</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Hobby</button>
+                    </form>
+                </div>
 
-        <!-- Expenses Tab -->
-        <div id="expenses-tab" class="tab-content">
-            <div id="expense-message" class="message"></div>
-            
-            <div class="card">
-                <h3>Add New Expense</h3>
-                <form id="expense-form">
-                    <div class="form-group">
-                        <label for="expense-hobby">Hobby *</label>
-                        <select id="expense-hobby" required>
-                            <option value="">Select a hobby</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="expense-amount">Amount (€) *</label>
-                        <input type="number" id="expense-amount" step="0.01" required placeholder="0.00">
-                    </div>
-                    <div class="form-group">
-                        <label for="expense-date">Date *</label>
-                        <input type="date" id="expense-date" required>
-                        <script>
-                            document.getElementById('expense-date').value = new Date().toISOString().split('T')[0];
-                        </script>
-                    </div>
-                    <div class="form-group">
-                        <label for="expense-description">Description</label>
-                        <input type="text" id="expense-description" placeholder="e.g., New camera lens">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Add Expense</button>
-                </form>
+                <div class="card">
+                    <h3>Your Hobbies</h3>
+                    <div id="hobbies-loading" class="loading" style="display: none;">Loading...</div>
+                    <ul id="hobbies-list" class="hobby-list"></ul>
+                </div>
             </div>
 
-            <div class="card">
-                <h3>Recent Expenses</h3>
-                <div id="expenses-loading" class="loading" style="display: none;">Loading...</div>
-                <ul id="expenses-list" class="expense-list"></ul>
-            </div>
-        </div>
+            <!-- Expenses Tab -->
+            <div id="expenses-tab" class="tab-content">
+                <div id="expense-message" class="message"></div>
+                
+                <div class="card">
+                    <h3>Add New Expense</h3>
+                    <form id="expense-form">
+                        <div class="form-group">
+                            <label for="expense-hobby">Hobby *</label>
+                            <select id="expense-hobby" required>
+                                <option value="">Select a hobby</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-amount">Amount (€) *</label>
+                            <input type="number" id="expense-amount" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-date">Date *</label>
+                            <input type="date" id="expense-date" required>
+                            <script>
+                                // Set default date to today immediately
+                                document.getElementById('expense-date').value = new Date().toISOString().split('T')[0];
+                            </script>
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-description">Description</label>
+                            <input type="text" id="expense-description" placeholder="e.g., New camera lens">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Expense</button>
+                    </form>
+                </div>
 
-        <!-- Activities Tab -->
-        <div id="activities-tab" class="tab-content">
-            <div id="activity-message" class="message"></div>
-            
-            <div class="card">
-                <h3>Add New Activity</h3>
-                <form id="activity-form">
-                    <div class="form-group">
-                        <label for="activity-hobby">Hobby *</label>
-                        <select id="activity-hobby" required>
-                            <option value="">Select a hobby</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="activity-date">Date *</label>
-                        <input type="date" id="activity-date" required>
-                        <script>
-                            document.getElementById('activity-date').value = new Date().toISOString().split('T')[0];
-                        </script>
-                    </div>
-                    <div class="form-group">
-                        <label>Duration *</label>
-                        <div style="display: flex; gap: 10px;">
-                            <div style="flex: 1;">
-                                <input type="number" id="activity-duration-hours" min="0" placeholder="Hours" value="0">
-                            </div>
-                            <div style="flex: 1;">
-                                <input type="number" id="activity-duration-minutes" min="0" max="59" placeholder="Minutes" value="0">
+                <div class="card">
+                    <h3>Recent Expenses</h3>
+                    <div id="expenses-loading" class="loading" style="display: none;">Loading...</div>
+                    <ul id="expenses-list" class="expense-list"></ul>
+                </div>
+            </div>
+
+            <!-- Activities Tab -->
+            <div id="activities-tab" class="tab-content">
+                <div id="activity-message" class="message"></div>
+                
+                <div class="card">
+                    <h3>Add New Activity</h3>
+                    <form id="activity-form">
+                        <div class="form-group">
+                            <label for="activity-hobby">Hobby *</label>
+                            <select id="activity-hobby" required>
+                                <option value="">Select a hobby</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="activity-date">Date *</label>
+                            <input type="date" id="activity-date" required>
+                            <script>
+                                // Set default date to today immediately
+                                document.getElementById('activity-date').value = new Date().toISOString().split('T')[0];
+                            </script>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration *</label>
+                            <div style="display: flex; gap: 10px;">
+                                <div style="flex: 1;">
+                                    <input type="number" id="activity-duration-hours" min="0" placeholder="Hours" value="0">
+                                </div>
+                                <div style="flex: 1;">
+                                    <input type="number" id="activity-duration-minutes" min="0" max="59" placeholder="Minutes" value="0">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="activity-description">Description</label>
-                        <input type="text" id="activity-description" placeholder="e.g., Photo walk in the park">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Add Activity</button>
-                </form>
+                        <div class="form-group">
+                            <label for="activity-description">Description</label>
+                            <input type="text" id="activity-description" placeholder="e.g., Photo walk in the park">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Activity</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Recent Activities</h3>
+                    <div id="activities-loading" class="loading" style="display: none;">Loading...</div>
+                    <ul id="activities-list" class="activity-list"></ul>
+                </div>
             </div>
 
-            <div class="card">
-                <h3>Recent Activities</h3>
-                <div id="activities-loading" class="loading" style="display: none;">Loading...</div>
-                <ul id="activities-list" class="activity-list"></ul>
+            <!-- Import/Export Tab -->
+            <div id="import-export-tab" class="tab-content">
+                <div id="import-export-message" class="message"></div>
+                
+                <div class="card">
+                    <h3>📤 Export Data</h3>
+                    <p>Download all your hobbies, expenses, and activities as a JSON file.</p>
+                    <button id="export-btn" class="btn btn-primary">Export Data</button>
+                </div>
+
+                <div class="card">
+                    <h3>📥 Import Data</h3>
+                    <p>Import hobbies, expenses, and activities from a JSON file. Existing hobbies with the same name will not be duplicated.</p>
+                    <form id="import-form">
+                        <div class="form-group">
+                            <label for="import-file">Select JSON file</label>
+                            <input type="file" id="import-file" accept=".json" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Import Data</button>
+                    </form>
+                </div>
             </div>
         </div>
-
-        <!-- Import/Export Tab -->
-        <div id="import-export-tab" class="tab-content">
-            <div id="import-export-message" class="message"></div>
-            
-            <div class="card">
-                <h3>📤 Export Data</h3>
-                <p style="color: #9CA3AF; margin-bottom: 20px;">Download all your hobbies, expenses, and activities as a JSON file.</p>
-                <button id="export-btn" class="btn btn-primary">Export Data</button>
-            </div>
-
-            <div class="card">
-                <h3>📥 Import Data</h3>
-                <p style="color: #9CA3AF; margin-bottom: 20px;">Import hobbies, expenses, and activities from a JSON file. Existing hobbies with the same name will not be duplicated.</p>
-                <form id="import-form">
-                    <div class="form-group">
-                        <label for="import-file">Select JSON file</label>
-                        <input type="file" id="import-file" accept=".json" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Import Data</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Floating Action Button (FAB) -->
-    <button class="fab" id="fab-button">+</button>
-    <div class="fab-menu" id="fab-menu">
-        <div class="fab-menu-item" onclick="fabAction('hobbies')">➕ Add Hobby</div>
-        <div class="fab-menu-item" onclick="fabAction('expenses')">💰 Add Expense</div>
-        <div class="fab-menu-item" onclick="fabAction('activities')">⏱️ Add Activity</div>
     </div>
 
     <!-- Hobby Details Modal -->
@@ -770,68 +621,38 @@
                     <div class="form-group">
                         <label for="edit-hobby-target-value">Target Cost per Hour (€)</label>
                         <input type="number" id="edit-hobby-target-value" step="0.01" min="0">
-                        <small>Optional: Your target budget per hour for this hobby</small>
+                        <small style="color: #6c757d;">Optional: Your target budget per hour for this hobby</small>
                     </div>
                     <button type="submit" class="btn btn-primary">Update Hobby</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                    <button type="button" class="btn" onclick="closeEditModal()">Cancel</button>
                 </form>
             </div>
         </div>
     </div>
 
     <script>
-        // FAB Menu Toggle
-        document.getElementById('fab-button').addEventListener('click', function() {
-            const fabMenu = document.getElementById('fab-menu');
-            const fabButton = document.getElementById('fab-button');
-            fabMenu.classList.toggle('active');
-            fabButton.classList.toggle('active');
-        });
-
-        // FAB Menu Actions
-        function fabAction(tab) {
-            const fabMenu = document.getElementById('fab-menu');
-            const fabButton = document.getElementById('fab-button');
-            fabMenu.classList.remove('active');
-            fabButton.classList.remove('active');
-            
-            showTab(tab);
-            
-            setTimeout(() => {
-                const formMap = {
-                    'hobbies': 'hobby-form',
-                    'expenses': 'expense-form',
-                    'activities': 'activity-form'
-                };
-                const formId = formMap[tab];
-                if (formId) {
-                    document.getElementById(formId).scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }, 100);
-        }
-
         // Tab switching
         function showTab(tabName) {
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
             document.getElementById(tabName + '-tab').classList.add('active');
-
-            const sidebarItems = document.querySelectorAll('.sidebar-item');
-            sidebarItems.forEach(item => item.classList.remove('active'));
-            const activeItem = document.querySelector(`.sidebar-item[data-tab="${tabName}"]`);
-            if (activeItem) activeItem.classList.add('active');
-
-            if (tabName === 'hobbies') {
-                loadHobbies();
-            } else if (tabName === 'expenses') {
-                loadExpenses();
+            
+            // Load data when switching tabs
+            if (tabName === 'summary') loadSummary();
+            if (tabName === 'hobbies') loadHobbies();
+            if (tabName === 'expenses') {
                 loadHobbiesForSelect('expense-hobby');
-            } else if (tabName === 'activities') {
-                loadActivities();
+                loadExpenses();
+            }
+            if (tabName === 'activities') {
                 loadHobbiesForSelect('activity-hobby');
+                loadActivities();
             }
         }
 
+        // Show message
         function showMessage(elementId, message, type) {
             const el = document.getElementById(elementId);
             el.textContent = message;
@@ -842,6 +663,7 @@
             }, 5000);
         }
 
+        // Load hobbies
         async function loadHobbies() {
             const loadingEl = document.getElementById('hobbies-loading');
             const listEl = document.getElementById('hobbies-list');
@@ -884,7 +706,7 @@
                         viewBtn.onclick = () => showHobbyDetails(hobby.id);
                         
                         const editBtn = document.createElement('button');
-                        editBtn.className = 'btn btn-secondary';
+                        editBtn.className = 'btn';
                         editBtn.textContent = 'Edit';
                         editBtn.onclick = () => editHobby(hobby);
                         
@@ -909,6 +731,7 @@
             }
         }
 
+        // Load hobbies for select dropdown
         async function loadHobbiesForSelect(selectId) {
             try {
                 const response = await fetch('/api/hobbies');
@@ -923,10 +746,11 @@
                     select.appendChild(option);
                 });
             } catch (error) {
-                console.error('Error loading hobbies for select:', error);
+                console.error('Error loading hobbies:', error);
             }
         }
 
+        // Add hobby
         document.getElementById('hobby-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -959,6 +783,7 @@
             }
         });
 
+        // Delete hobby
         async function deleteHobby(id, name) {
             if (!confirm(`Delete hobby "${name}" and all its expenses and activities?`)) return;
             
@@ -975,6 +800,7 @@
             }
         }
 
+        // Edit hobby
         function editHobby(hobby) {
             document.getElementById('edit-hobby-id').value = hobby.id;
             document.getElementById('edit-hobby-name').value = hobby.name;
@@ -987,6 +813,7 @@
             document.getElementById('edit-hobby-modal').style.display = 'none';
         }
 
+        // Submit edit hobby form
         document.getElementById('edit-hobby-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -1020,15 +847,18 @@
             }
         });
 
+        // Show hobby details with chart
         let hobbyChart = null;
         
         async function showHobbyDetails(hobbyId) {
             try {
+                // Check if Chart.js is available
                 if (typeof Chart === 'undefined') {
                     alert('Chart library not loaded. Please check your internet connection or ad blocker settings.');
                     return;
                 }
                 
+                // Fetch hobby stats and chart data
                 const [statsResponse, chartResponse] = await Promise.all([
                     fetch(`/api/hobbies/${hobbyId}/stats`),
                     fetch(`/api/hobbies/${hobbyId}/chart-data`)
@@ -1042,8 +872,10 @@
                 const stats = await statsResponse.json();
                 const chartData = await chartResponse.json();
                 
+                // Update modal title
                 document.getElementById('modal-hobby-name').textContent = stats.hobby.name;
                 
+                // Update stats
                 const statsHtml = `
                     <div class="stat">
                         <span>Total Expenses:</span>
@@ -1061,12 +893,15 @@
                 `;
                 document.getElementById('hobby-stats').innerHTML = statsHtml;
                 
+                // Create chart
                 const ctx = document.getElementById('hobby-chart').getContext('2d');
                 
+                // Destroy previous chart if exists
                 if (hobbyChart) {
                     hobbyChart.destroy();
                 }
                 
+                // Prepare chart data
                 const labels = chartData.time_series.map(d => d.date);
                 const data = chartData.time_series.map(d => d.expense_per_hour);
                 
@@ -1074,27 +909,29 @@
                     {
                         label: 'Expense per Hour (€/h)',
                         data: data,
-                        borderColor: '#06B6D4',
-                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
                         tension: 0.4,
                         fill: false
                     }
                 ];
                 
+                // Add target value line if exists
                 if (chartData.target_value) {
                     datasets.push({
                         label: 'Target (€/h)',
                         data: new Array(labels.length).fill(chartData.target_value),
-                        borderColor: '#22C55E',
+                        borderColor: '#28a745',
                         borderDash: [5, 5],
                         pointRadius: 0
                     });
                     
+                    // Add upper bound for green area (hidden from legend)
                     datasets.push({
                         label: 'Target Zone',
                         data: new Array(labels.length).fill(0),
                         borderColor: 'transparent',
-                        backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                        backgroundColor: 'rgba(40, 167, 69, 0.2)',
                         fill: 1,
                         pointRadius: 0
                     });
@@ -1112,64 +949,46 @@
                         plugins: {
                             title: {
                                 display: true,
-                                text: 'Expense per Hour Over Time',
-                                color: '#E5E5E7',
-                                font: { size: 16 }
+                                text: 'Expense per Hour Over Time'
                             },
                             legend: {
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    color: '#E5E5E7',
                                     filter: function(legendItem, chartData) {
+                                        // Hide "Target Zone" from legend
                                         return legendItem.text !== 'Target Zone';
                                     }
                                 }
                             },
                             tooltip: {
                                 mode: 'index',
-                                intersect: false,
-                                backgroundColor: '#2A2A3C',
-                                titleColor: '#E5E5E7',
-                                bodyColor: '#E5E5E7',
-                                borderColor: '#7C3AED',
-                                borderWidth: 1
+                                intersect: false
                             }
                         },
                         scales: {
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Date',
-                                    color: '#E5E5E7'
+                                    text: 'Date'
                                 },
                                 ticks: {
                                     maxRotation: 45,
-                                    minRotation: 45,
-                                    color: '#9CA3AF'
-                                },
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
+                                    minRotation: 45
                                 }
                             },
                             y: {
                                 title: {
                                     display: true,
-                                    text: 'Expense per Hour (€/h)',
-                                    color: '#E5E5E7'
+                                    text: 'Expense per Hour (€/h)'
                                 },
-                                beginAtZero: true,
-                                ticks: {
-                                    color: '#9CA3AF'
-                                },
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                }
+                                beginAtZero: true
                             }
                         }
                     }
                 });
                 
+                // Show modal
                 document.getElementById('hobby-details-modal').style.display = 'block';
                 
             } catch (error) {
@@ -1182,6 +1001,7 @@
             document.getElementById('hobby-details-modal').style.display = 'none';
         }
 
+        // Close modals when clicking outside
         window.onclick = function(event) {
             const detailsModal = document.getElementById('hobby-details-modal');
             const editModal = document.getElementById('edit-hobby-modal');
@@ -1193,6 +1013,7 @@
             }
         }
 
+        // Load expenses
         async function loadExpenses() {
             const loadingEl = document.getElementById('expenses-loading');
             const listEl = document.getElementById('expenses-list');
@@ -1242,6 +1063,7 @@
             }
         }
 
+        // Add expense
         document.getElementById('expense-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -1265,7 +1087,6 @@
                 if (response.ok) {
                     showMessage('expense-message', 'Expense added successfully!', 'success');
                     document.getElementById('expense-form').reset();
-                    document.getElementById('expense-date').value = new Date().toISOString().split('T')[0];
                     loadExpenses();
                 } else {
                     const error = await response.json();
@@ -1276,6 +1097,7 @@
             }
         });
 
+        // Load activities
         async function loadActivities() {
             const loadingEl = document.getElementById('activities-loading');
             const listEl = document.getElementById('activities-list');
@@ -1301,6 +1123,7 @@
                         li.className = 'activity-item';
                         const date = new Date(activity.date).toLocaleDateString();
                         
+                        // Convert duration hours to hours and minutes format
                         const totalMinutes = Math.round(activity.duration_hours * 60);
                         const hours = Math.floor(totalMinutes / 60);
                         const minutes = totalMinutes % 60;
@@ -1337,6 +1160,7 @@
             }
         }
 
+        // Add activity
         document.getElementById('activity-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -1347,6 +1171,7 @@
             const duration_hours = hours + (minutes / 60.0);
             const description = document.getElementById('activity-description').value;
             
+            // Validate that at least some duration is provided
             if (duration_hours === 0) {
                 showMessage('activity-message', 'Please enter a duration (hours and/or minutes)', 'error');
                 return;
@@ -1367,9 +1192,6 @@
                 if (response.ok) {
                     showMessage('activity-message', 'Activity added successfully!', 'success');
                     document.getElementById('activity-form').reset();
-                    document.getElementById('activity-date').value = new Date().toISOString().split('T')[0];
-                    document.getElementById('activity-duration-hours').value = '0';
-                    document.getElementById('activity-duration-minutes').value = '0';
                     loadActivities();
                 } else {
                     const error = await response.json();
@@ -1380,6 +1202,7 @@
             }
         });
 
+        // Load summary
         async function loadSummary() {
             const loadingEl = document.getElementById('summary-loading');
             const contentEl = document.getElementById('summary-content');
@@ -1403,6 +1226,7 @@
                         title.textContent = `🎯 ${hobby.name}`;
                         card.appendChild(title);
                         
+                        // Total Expenses stat
                         const expenseStat = document.createElement('div');
                         expenseStat.className = 'stat';
                         const expenseLabel = document.createElement('span');
@@ -1414,6 +1238,7 @@
                         expenseStat.appendChild(expenseValue);
                         card.appendChild(expenseStat);
                         
+                        // Total Hours stat
                         const hoursStat = document.createElement('div');
                         hoursStat.className = 'stat';
                         const hoursLabel = document.createElement('span');
@@ -1425,6 +1250,7 @@
                         hoursStat.appendChild(hoursValue);
                         card.appendChild(hoursStat);
                         
+                        // Cost per Hour stat
                         const costStat = document.createElement('div');
                         costStat.className = 'stat';
                         const costLabel = document.createElement('span');
@@ -1436,6 +1262,7 @@
                         costStat.appendChild(costValue);
                         card.appendChild(costStat);
                         
+                        // Target value stat if exists
                         if (hobby.target_value) {
                             const targetStat = document.createElement('div');
                             targetStat.className = 'stat';
@@ -1449,9 +1276,10 @@
                             card.appendChild(targetStat);
                         }
                         
+                        // Add click hint
                         const clickHint = document.createElement('small');
                         clickHint.textContent = 'Click to view chart';
-                        clickHint.style.color = 'rgba(255, 255, 255, 0.7)';
+                        clickHint.style.color = '#6c757d';
                         clickHint.style.display = 'block';
                         clickHint.style.marginTop = '10px';
                         card.appendChild(clickHint);
@@ -1466,11 +1294,13 @@
             }
         }
 
+        // Export data
         document.getElementById('export-btn').addEventListener('click', async () => {
             try {
                 const response = await fetch('/api/export');
                 const data = await response.json();
                 
+                // Create download link
                 const dataStr = JSON.stringify(data, null, 2);
                 const dataBlob = new Blob([dataStr], { type: 'application/json' });
                 const url = URL.createObjectURL(dataBlob);
@@ -1488,6 +1318,7 @@
             }
         });
 
+        // Import data
         document.getElementById('import-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -1515,6 +1346,7 @@
                         `Data imported successfully! ${result.hobbies_imported} hobbies, ${result.expenses_imported} expenses, ${result.activities_imported} activities.`, 
                         'success');
                     document.getElementById('import-form').reset();
+                    // Reload summary to show imported data
                     loadSummary();
                 } else {
                     const error = await response.json();
@@ -1525,6 +1357,7 @@
             }
         });
 
+        // Load initial data
         loadSummary();
     </script>
 </body>
