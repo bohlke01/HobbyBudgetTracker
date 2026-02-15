@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hobby Budget Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .tab.active {
+            color: #667eea;
+            background: white;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.25rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .hobby-list, .expense-list, .activity-list {
+            list-style: none;
+        }
+
+        .hobby-item, .expense-item, .activity-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .hobby-item:hover, .expense-item:hover, .activity-item:hover {
+            background: #e9ecef;
+        }
+
+        .item-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .item-desc {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .summary-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 0.9rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .tab {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+                min-width: 100px;
+            }
+
+            .hobby-item, .expense-item, .activity-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            input, select, textarea {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.3rem;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            padding: 0;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 900px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .close:hover {
+            opacity: 0.8;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 20px auto;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Hobby Budget Tracker</h1>
+            <p>Track expenses and activities for your hobbies</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('summary')">📊 Summary</button>
+            <button class="tab" onclick="showTab('hobbies')">🎯 Hobbies</button>
+            <button class="tab" onclick="showTab('expenses')">💰 Expenses</button>
+            <button class="tab" onclick="showTab('activities')">⏱️ Activities</button>
+            <button class="tab" onclick="showTab('import-export')">💾 Import/Export</button>
+        </div>
+
+        <div class="content">
+            <!-- Summary Tab -->
+            <div id="summary-tab" class="tab-content active">
+                <div id="summary-message" class="message"></div>
+                <div id="summary-content" class="summary-grid"></div>
+                <div id="summary-loading" class="loading" style="display: none;">Loading...</div>
+            </div>
+
+            <!-- Hobbies Tab -->
+            <div id="hobbies-tab" class="tab-content">
+                <div id="hobby-message" class="message"></div>
+                
+                <div class="card">
+                    <h3>Add New Hobby</h3>
+                    <form id="hobby-form">
+                        <div class="form-group">
+                            <label for="hobby-name">Hobby Name *</label>
+                            <input type="text" id="hobby-name" required placeholder="e.g., Photography">
+                        </div>
+                        <div class="form-group">
+                            <label for="hobby-description">Description</label>
+                            <textarea id="hobby-description" placeholder="Optional description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="hobby-target-value">Target Cost per Hour (€)</label>
+                            <input type="number" id="hobby-target-value" step="0.01" min="0" placeholder="e.g., 10.00">
+                            <small style="color: #6c757d;">Optional: Your target budget per hour for this hobby</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Hobby</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Your Hobbies</h3>
+                    <div id="hobbies-loading" class="loading" style="display: none;">Loading...</div>
+                    <ul id="hobbies-list" class="hobby-list"></ul>
+                </div>
+            </div>
+
+            <!-- Expenses Tab -->
+            <div id="expenses-tab" class="tab-content">
+                <div id="expense-message" class="message"></div>
+                
+                <div class="card">
+                    <h3>Add New Expense</h3>
+                    <form id="expense-form">
+                        <div class="form-group">
+                            <label for="expense-hobby">Hobby *</label>
+                            <select id="expense-hobby" required>
+                                <option value="">Select a hobby</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-amount">Amount (€) *</label>
+                            <input type="number" id="expense-amount" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-date">Date *</label>
+                            <input type="date" id="expense-date" required>
+                            <script>
+                                // Set default date to today immediately
+                                document.getElementById('expense-date').value = new Date().toISOString().split('T')[0];
+                            </script>
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-description">Description</label>
+                            <input type="text" id="expense-description" placeholder="e.g., New camera lens">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Expense</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Recent Expenses</h3>
+                    <div id="expenses-loading" class="loading" style="display: none;">Loading...</div>
+                    <ul id="expenses-list" class="expense-list"></ul>
+                </div>
+            </div>
+
+            <!-- Activities Tab -->
+            <div id="activities-tab" class="tab-content">
+                <div id="activity-message" class="message"></div>
+                
+                <div class="card">
+                    <h3>Add New Activity</h3>
+                    <form id="activity-form">
+                        <div class="form-group">
+                            <label for="activity-hobby">Hobby *</label>
+                            <select id="activity-hobby" required>
+                                <option value="">Select a hobby</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="activity-date">Date *</label>
+                            <input type="date" id="activity-date" required>
+                            <script>
+                                // Set default date to today immediately
+                                document.getElementById('activity-date').value = new Date().toISOString().split('T')[0];
+                            </script>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration *</label>
+                            <div style="display: flex; gap: 10px;">
+                                <div style="flex: 1;">
+                                    <input type="number" id="activity-duration-hours" min="0" placeholder="Hours" value="0">
+                                </div>
+                                <div style="flex: 1;">
+                                    <input type="number" id="activity-duration-minutes" min="0" max="59" placeholder="Minutes" value="0">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="activity-description">Description</label>
+                            <input type="text" id="activity-description" placeholder="e.g., Photo walk in the park">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Activity</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Recent Activities</h3>
+                    <div id="activities-loading" class="loading" style="display: none;">Loading...</div>
+                    <ul id="activities-list" class="activity-list"></ul>
+                </div>
+            </div>
+
+            <!-- Import/Export Tab -->
+            <div id="import-export-tab" class="tab-content">
+                <div id="import-export-message" class="message"></div>
+                
+                <div class="card">
+                    <h3>📤 Export Data</h3>
+                    <p>Download all your hobbies, expenses, and activities as a JSON file.</p>
+                    <button id="export-btn" class="btn btn-primary">Export Data</button>
+                </div>
+
+                <div class="card">
+                    <h3>📥 Import Data</h3>
+                    <p>Import hobbies, expenses, and activities from a JSON file. Existing hobbies with the same name will not be duplicated.</p>
+                    <form id="import-form">
+                        <div class="form-group">
+                            <label for="import-file">Select JSON file</label>
+                            <input type="file" id="import-file" accept=".json" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Import Data</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hobby Details Modal -->
+    <div id="hobby-details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-hobby-name"></h2>
+                <button class="close" onclick="closeHobbyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="hobby-stats"></div>
+                <div class="chart-container">
+                    <canvas id="hobby-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Hobby Modal -->
+    <div id="edit-hobby-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Hobby</h2>
+                <button class="close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-hobby-form">
+                    <input type="hidden" id="edit-hobby-id">
+                    <div class="form-group">
+                        <label for="edit-hobby-name">Hobby Name *</label>
+                        <input type="text" id="edit-hobby-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-hobby-description">Description</label>
+                        <textarea id="edit-hobby-description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-hobby-target-value">Target Cost per Hour (€)</label>
+                        <input type="number" id="edit-hobby-target-value" step="0.01" min="0">
+                        <small style="color: #6c757d;">Optional: Your target budget per hour for this hobby</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Hobby</button>
+                    <button type="button" class="btn" onclick="closeEditModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Load data when switching tabs
+            if (tabName === 'summary') loadSummary();
+            if (tabName === 'hobbies') loadHobbies();
+            if (tabName === 'expenses') {
+                loadHobbiesForSelect('expense-hobby');
+                loadExpenses();
+            }
+            if (tabName === 'activities') {
+                loadHobbiesForSelect('activity-hobby');
+                loadActivities();
+            }
+        }
+
+        // Show message
+        function showMessage(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.className = `message ${type}`;
+            el.style.display = 'block';
+            setTimeout(() => {
+                el.style.display = 'none';
+            }, 5000);
+        }
+
+        // Load hobbies
+        async function loadHobbies() {
+            const loadingEl = document.getElementById('hobbies-loading');
+            const listEl = document.getElementById('hobbies-list');
+            
+            loadingEl.style.display = 'block';
+            try {
+                const response = await fetch('/api/hobbies');
+                const hobbies = await response.json();
+                
+                listEl.innerHTML = '';
+                if (hobbies.length === 0) {
+                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎯</div><p>No hobbies yet. Add your first hobby above!</p></div>';
+                } else {
+                    hobbies.forEach(hobby => {
+                        const li = document.createElement('li');
+                        li.className = 'hobby-item';
+                        
+                        const itemInfo = document.createElement('div');
+                        itemInfo.className = 'item-info';
+                        
+                        const itemName = document.createElement('div');
+                        itemName.className = 'item-name';
+                        itemName.textContent = hobby.name;
+                        
+                        const itemDesc = document.createElement('div');
+                        itemDesc.className = 'item-desc';
+                        const descText = hobby.description || 'No description';
+                        const targetText = hobby.target_value ? ` | Target: €${hobby.target_value.toFixed(2)}/h` : '';
+                        itemDesc.textContent = descText + targetText;
+                        
+                        itemInfo.appendChild(itemName);
+                        itemInfo.appendChild(itemDesc);
+                        
+                        const itemActions = document.createElement('div');
+                        itemActions.className = 'item-actions';
+                        
+                        const viewBtn = document.createElement('button');
+                        viewBtn.className = 'btn btn-primary';
+                        viewBtn.textContent = 'View Stats';
+                        viewBtn.onclick = () => showHobbyDetails(hobby.id);
+                        
+                        const editBtn = document.createElement('button');
+                        editBtn.className = 'btn';
+                        editBtn.textContent = 'Edit';
+                        editBtn.onclick = () => editHobby(hobby);
+                        
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.className = 'btn btn-danger';
+                        deleteBtn.textContent = 'Delete';
+                        deleteBtn.onclick = () => deleteHobby(hobby.id, hobby.name);
+                        
+                        itemActions.appendChild(viewBtn);
+                        itemActions.appendChild(editBtn);
+                        itemActions.appendChild(deleteBtn);
+                        
+                        li.appendChild(itemInfo);
+                        li.appendChild(itemActions);
+                        listEl.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                showMessage('hobby-message', 'Error loading hobbies', 'error');
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // Load hobbies for select dropdown
+        async function loadHobbiesForSelect(selectId) {
+            try {
+                const response = await fetch('/api/hobbies');
+                const hobbies = await response.json();
+                
+                const select = document.getElementById(selectId);
+                select.innerHTML = '<option value="">Select a hobby</option>';
+                hobbies.forEach(hobby => {
+                    const option = document.createElement('option');
+                    option.value = hobby.id;
+                    option.textContent = hobby.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading hobbies:', error);
+            }
+        }
+
+        // Add hobby
+        document.getElementById('hobby-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('hobby-name').value;
+            const description = document.getElementById('hobby-description').value;
+            const targetValue = document.getElementById('hobby-target-value').value;
+            
+            const payload = { name, description };
+            if (targetValue) {
+                payload.target_value = parseFloat(targetValue);
+            }
+            
+            try {
+                const response = await fetch('/api/hobbies', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    showMessage('hobby-message', 'Hobby added successfully!', 'success');
+                    document.getElementById('hobby-form').reset();
+                    loadHobbies();
+                } else {
+                    const error = await response.json();
+                    showMessage('hobby-message', error.error || 'Error adding hobby', 'error');
+                }
+            } catch (error) {
+                showMessage('hobby-message', 'Error adding hobby', 'error');
+            }
+        });
+
+        // Delete hobby
+        async function deleteHobby(id, name) {
+            if (!confirm(`Delete hobby "${name}" and all its expenses and activities?`)) return;
+            
+            try {
+                const response = await fetch(`/api/hobbies/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    showMessage('hobby-message', 'Hobby deleted successfully!', 'success');
+                    loadHobbies();
+                } else {
+                    showMessage('hobby-message', 'Error deleting hobby', 'error');
+                }
+            } catch (error) {
+                showMessage('hobby-message', 'Error deleting hobby', 'error');
+            }
+        }
+
+        // Edit hobby
+        function editHobby(hobby) {
+            document.getElementById('edit-hobby-id').value = hobby.id;
+            document.getElementById('edit-hobby-name').value = hobby.name;
+            document.getElementById('edit-hobby-description').value = hobby.description || '';
+            document.getElementById('edit-hobby-target-value').value = hobby.target_value || '';
+            document.getElementById('edit-hobby-modal').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-hobby-modal').style.display = 'none';
+        }
+
+        // Submit edit hobby form
+        document.getElementById('edit-hobby-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('edit-hobby-id').value;
+            const name = document.getElementById('edit-hobby-name').value;
+            const description = document.getElementById('edit-hobby-description').value;
+            const targetValue = document.getElementById('edit-hobby-target-value').value;
+            
+            const payload = { name, description };
+            if (targetValue) {
+                payload.target_value = parseFloat(targetValue);
+            }
+            
+            try {
+                const response = await fetch(`/api/hobbies/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    showMessage('hobby-message', 'Hobby updated successfully!', 'success');
+                    closeEditModal();
+                    loadHobbies();
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Error updating hobby');
+                }
+            } catch (error) {
+                alert('Error updating hobby');
+            }
+        });
+
+        // Show hobby details with chart
+        let hobbyChart = null;
+        
+        async function showHobbyDetails(hobbyId) {
+            try {
+                // Check if Chart.js is available
+                if (typeof Chart === 'undefined') {
+                    alert('Chart library not loaded. Please check your internet connection or ad blocker settings.');
+                    return;
+                }
+                
+                // Fetch hobby stats and chart data
+                const [statsResponse, chartResponse] = await Promise.all([
+                    fetch(`/api/hobbies/${hobbyId}/stats`),
+                    fetch(`/api/hobbies/${hobbyId}/chart-data`)
+                ]);
+                
+                if (!statsResponse.ok || !chartResponse.ok) {
+                    alert('Error loading hobby details');
+                    return;
+                }
+                
+                const stats = await statsResponse.json();
+                const chartData = await chartResponse.json();
+                
+                // Update modal title
+                document.getElementById('modal-hobby-name').textContent = stats.hobby.name;
+                
+                // Update stats
+                const statsHtml = `
+                    <div class="stat">
+                        <span>Total Expenses:</span>
+                        <span class="stat-value">€${stats.total_expenses.toFixed(2)}</span>
+                    </div>
+                    <div class="stat">
+                        <span>Total Hours:</span>
+                        <span class="stat-value">${stats.total_hours.toFixed(1)}h</span>
+                    </div>
+                    <div class="stat">
+                        <span>💰 Cost per Hour:</span>
+                        <span class="stat-value">${stats.expense_per_hour ? '€' + stats.expense_per_hour.toFixed(2) + '/h' : 'N/A'}</span>
+                    </div>
+                    ${stats.hobby.target_value ? `<div class="stat"><span>🎯 Target:</span><span class="stat-value">€${stats.hobby.target_value.toFixed(2)}/h</span></div>` : ''}
+                `;
+                document.getElementById('hobby-stats').innerHTML = statsHtml;
+                
+                // Create chart
+                const ctx = document.getElementById('hobby-chart').getContext('2d');
+                
+                // Destroy previous chart if exists
+                if (hobbyChart) {
+                    hobbyChart.destroy();
+                }
+                
+                // Prepare chart data
+                const labels = chartData.time_series.map(d => d.date);
+                const data = chartData.time_series.map(d => d.expense_per_hour);
+                
+                const datasets = [
+                    {
+                        label: 'Expense per Hour (€/h)',
+                        data: data,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: false
+                    }
+                ];
+                
+                // Add target value line if exists
+                if (chartData.target_value) {
+                    datasets.push({
+                        label: 'Target (€/h)',
+                        data: new Array(labels.length).fill(chartData.target_value),
+                        borderColor: '#28a745',
+                        borderDash: [5, 5],
+                        pointRadius: 0
+                    });
+                    
+                    // Add upper bound for green area (hidden from legend)
+                    datasets.push({
+                        label: 'Target Zone',
+                        data: new Array(labels.length).fill(0),
+                        borderColor: 'transparent',
+                        backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                        fill: 1,
+                        pointRadius: 0
+                    });
+                }
+                
+                hobbyChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Expense per Hour Over Time'
+                            },
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    filter: function(legendItem, chartData) {
+                                        // Hide "Target Zone" from legend
+                                        return legendItem.text !== 'Target Zone';
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Date'
+                                },
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Expense per Hour (€/h)'
+                                },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+                
+                // Show modal
+                document.getElementById('hobby-details-modal').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error showing hobby details:', error);
+                alert('Error loading hobby details');
+            }
+        }
+
+        function closeHobbyModal() {
+            document.getElementById('hobby-details-modal').style.display = 'none';
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const detailsModal = document.getElementById('hobby-details-modal');
+            const editModal = document.getElementById('edit-hobby-modal');
+            if (event.target === detailsModal) {
+                closeHobbyModal();
+            }
+            if (event.target === editModal) {
+                closeEditModal();
+            }
+        }
+
+        // Load expenses
+        async function loadExpenses() {
+            const loadingEl = document.getElementById('expenses-loading');
+            const listEl = document.getElementById('expenses-list');
+            
+            loadingEl.style.display = 'block';
+            try {
+                const [expensesResponse, hobbiesResponse] = await Promise.all([
+                    fetch('/api/expenses'),
+                    fetch('/api/hobbies')
+                ]);
+                const expenses = await expensesResponse.json();
+                const hobbies = await hobbiesResponse.json();
+                
+                const hobbyMap = {};
+                hobbies.forEach(h => hobbyMap[h.id] = h.name);
+                
+                listEl.innerHTML = '';
+                if (expenses.length === 0) {
+                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💰</div><p>No expenses yet. Add your first expense above!</p></div>';
+                } else {
+                    expenses.forEach(expense => {
+                        const li = document.createElement('li');
+                        li.className = 'expense-item';
+                        const date = new Date(expense.date).toLocaleDateString();
+                        
+                        const itemInfo = document.createElement('div');
+                        itemInfo.className = 'item-info';
+                        
+                        const itemName = document.createElement('div');
+                        itemName.className = 'item-name';
+                        itemName.textContent = `€${expense.amount.toFixed(2)} - ${hobbyMap[expense.hobby_id]}`;
+                        
+                        const itemDesc = document.createElement('div');
+                        itemDesc.className = 'item-desc';
+                        itemDesc.textContent = `${expense.description || 'No description'} • ${date}`;
+                        
+                        itemInfo.appendChild(itemName);
+                        itemInfo.appendChild(itemDesc);
+                        li.appendChild(itemInfo);
+                        listEl.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                showMessage('expense-message', 'Error loading expenses', 'error');
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // Add expense
+        document.getElementById('expense-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const hobby_id = document.getElementById('expense-hobby').value;
+            const amount = document.getElementById('expense-amount').value;
+            const date = document.getElementById('expense-date').value;
+            const description = document.getElementById('expense-description').value;
+            
+            try {
+                const response = await fetch('/api/expenses', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        hobby_id: parseInt(hobby_id), 
+                        amount: parseFloat(amount), 
+                        date: date,
+                        description 
+                    })
+                });
+                
+                if (response.ok) {
+                    showMessage('expense-message', 'Expense added successfully!', 'success');
+                    document.getElementById('expense-form').reset();
+                    loadExpenses();
+                } else {
+                    const error = await response.json();
+                    showMessage('expense-message', error.error || 'Error adding expense', 'error');
+                }
+            } catch (error) {
+                showMessage('expense-message', 'Error adding expense', 'error');
+            }
+        });
+
+        // Load activities
+        async function loadActivities() {
+            const loadingEl = document.getElementById('activities-loading');
+            const listEl = document.getElementById('activities-list');
+            
+            loadingEl.style.display = 'block';
+            try {
+                const [activitiesResponse, hobbiesResponse] = await Promise.all([
+                    fetch('/api/activities'),
+                    fetch('/api/hobbies')
+                ]);
+                const activities = await activitiesResponse.json();
+                const hobbies = await hobbiesResponse.json();
+                
+                const hobbyMap = {};
+                hobbies.forEach(h => hobbyMap[h.id] = h.name);
+                
+                listEl.innerHTML = '';
+                if (activities.length === 0) {
+                    listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⏱️</div><p>No activities yet. Add your first activity above!</p></div>';
+                } else {
+                    activities.forEach(activity => {
+                        const li = document.createElement('li');
+                        li.className = 'activity-item';
+                        const date = new Date(activity.date).toLocaleDateString();
+                        
+                        // Convert duration hours to hours and minutes format
+                        const totalMinutes = Math.round(activity.duration_hours * 60);
+                        const hours = Math.floor(totalMinutes / 60);
+                        const minutes = totalMinutes % 60;
+                        let durationStr = '';
+                        if (hours > 0 && minutes > 0) {
+                            durationStr = `${hours}h ${minutes}m`;
+                        } else if (hours > 0) {
+                            durationStr = `${hours}h`;
+                        } else {
+                            durationStr = `${minutes}m`;
+                        }
+                        
+                        const itemInfo = document.createElement('div');
+                        itemInfo.className = 'item-info';
+                        
+                        const itemName = document.createElement('div');
+                        itemName.className = 'item-name';
+                        itemName.textContent = `${durationStr} - ${hobbyMap[activity.hobby_id]}`;
+                        
+                        const itemDesc = document.createElement('div');
+                        itemDesc.className = 'item-desc';
+                        itemDesc.textContent = `${activity.description || 'No description'} • ${date}`;
+                        
+                        itemInfo.appendChild(itemName);
+                        itemInfo.appendChild(itemDesc);
+                        li.appendChild(itemInfo);
+                        listEl.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                showMessage('activity-message', 'Error loading activities', 'error');
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // Add activity
+        document.getElementById('activity-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const hobby_id = document.getElementById('activity-hobby').value;
+            const date = document.getElementById('activity-date').value;
+            const hours = parseInt(document.getElementById('activity-duration-hours').value) || 0;
+            const minutes = parseInt(document.getElementById('activity-duration-minutes').value) || 0;
+            const duration_hours = hours + (minutes / 60.0);
+            const description = document.getElementById('activity-description').value;
+            
+            // Validate that at least some duration is provided
+            if (duration_hours === 0) {
+                showMessage('activity-message', 'Please enter a duration (hours and/or minutes)', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/activities', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        hobby_id: parseInt(hobby_id), 
+                        duration_hours: duration_hours,
+                        date: date,
+                        description 
+                    })
+                });
+                
+                if (response.ok) {
+                    showMessage('activity-message', 'Activity added successfully!', 'success');
+                    document.getElementById('activity-form').reset();
+                    loadActivities();
+                } else {
+                    const error = await response.json();
+                    showMessage('activity-message', error.error || 'Error adding activity', 'error');
+                }
+            } catch (error) {
+                showMessage('activity-message', 'Error adding activity', 'error');
+            }
+        });
+
+        // Load summary
+        async function loadSummary() {
+            const loadingEl = document.getElementById('summary-loading');
+            const contentEl = document.getElementById('summary-content');
+            
+            loadingEl.style.display = 'block';
+            try {
+                const response = await fetch('/api/summary');
+                const summary = await response.json();
+                
+                contentEl.innerHTML = '';
+                if (summary.length === 0) {
+                    contentEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><p>No hobbies yet. Add your first hobby to get started!</p></div>';
+                } else {
+                    summary.forEach(hobby => {
+                        const card = document.createElement('div');
+                        card.className = 'summary-card';
+                        card.style.cursor = 'pointer';
+                        card.onclick = () => showHobbyDetails(hobby.id);
+                        
+                        const title = document.createElement('h4');
+                        title.textContent = `🎯 ${hobby.name}`;
+                        card.appendChild(title);
+                        
+                        // Total Expenses stat
+                        const expenseStat = document.createElement('div');
+                        expenseStat.className = 'stat';
+                        const expenseLabel = document.createElement('span');
+                        expenseLabel.textContent = 'Total Expenses:';
+                        const expenseValue = document.createElement('span');
+                        expenseValue.className = 'stat-value';
+                        expenseValue.textContent = `€${hobby.total_expenses.toFixed(2)}`;
+                        expenseStat.appendChild(expenseLabel);
+                        expenseStat.appendChild(expenseValue);
+                        card.appendChild(expenseStat);
+                        
+                        // Total Hours stat
+                        const hoursStat = document.createElement('div');
+                        hoursStat.className = 'stat';
+                        const hoursLabel = document.createElement('span');
+                        hoursLabel.textContent = 'Total Hours:';
+                        const hoursValue = document.createElement('span');
+                        hoursValue.className = 'stat-value';
+                        hoursValue.textContent = `${hobby.total_hours.toFixed(1)}h`;
+                        hoursStat.appendChild(hoursLabel);
+                        hoursStat.appendChild(hoursValue);
+                        card.appendChild(hoursStat);
+                        
+                        // Cost per Hour stat
+                        const costStat = document.createElement('div');
+                        costStat.className = 'stat';
+                        const costLabel = document.createElement('span');
+                        costLabel.textContent = '💰 Cost per Hour:';
+                        const costValue = document.createElement('span');
+                        costValue.className = 'stat-value';
+                        costValue.textContent = hobby.expense_per_hour ? `€${hobby.expense_per_hour.toFixed(2)}/h` : 'N/A';
+                        costStat.appendChild(costLabel);
+                        costStat.appendChild(costValue);
+                        card.appendChild(costStat);
+                        
+                        // Target value stat if exists
+                        if (hobby.target_value) {
+                            const targetStat = document.createElement('div');
+                            targetStat.className = 'stat';
+                            const targetLabel = document.createElement('span');
+                            targetLabel.textContent = '🎯 Target:';
+                            const targetValue = document.createElement('span');
+                            targetValue.className = 'stat-value';
+                            targetValue.textContent = `€${hobby.target_value.toFixed(2)}/h`;
+                            targetStat.appendChild(targetLabel);
+                            targetStat.appendChild(targetValue);
+                            card.appendChild(targetStat);
+                        }
+                        
+                        // Add click hint
+                        const clickHint = document.createElement('small');
+                        clickHint.textContent = 'Click to view chart';
+                        clickHint.style.color = '#6c757d';
+                        clickHint.style.display = 'block';
+                        clickHint.style.marginTop = '10px';
+                        card.appendChild(clickHint);
+                        
+                        contentEl.appendChild(card);
+                    });
+                }
+            } catch (error) {
+                showMessage('summary-message', 'Error loading summary', 'error');
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // Export data
+        document.getElementById('export-btn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/export');
+                const data = await response.json();
+                
+                // Create download link
+                const dataStr = JSON.stringify(data, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `hobby_budget_export_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                showMessage('import-export-message', 'Data exported successfully!', 'success');
+            } catch (error) {
+                showMessage('import-export-message', 'Error exporting data', 'error');
+            }
+        });
+
+        // Import data
+        document.getElementById('import-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('import-file');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showMessage('import-export-message', 'Please select a file', 'error');
+                return;
+            }
+            
+            try {
+                const fileContent = await file.text();
+                const importData = JSON.parse(fileContent);
+                
+                const response = await fetch('/api/import', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(importData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    showMessage('import-export-message', 
+                        `Data imported successfully! ${result.hobbies_imported} hobbies, ${result.expenses_imported} expenses, ${result.activities_imported} activities.`, 
+                        'success');
+                    document.getElementById('import-form').reset();
+                    // Reload summary to show imported data
+                    loadSummary();
+                } else {
+                    const error = await response.json();
+                    showMessage('import-export-message', error.error || 'Error importing data', 'error');
+                }
+            } catch (error) {
+                showMessage('import-export-message', 'Error reading or parsing file. Please ensure it is a valid JSON file.', 'error');
+            }
+        });
+
+        // Load initial data
+        loadSummary();
+    </script>
+</body>
+</html>
